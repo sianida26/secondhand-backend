@@ -15,11 +15,11 @@ module.exports = (sequelize, DataTypes) => {
   }
   tb_users.init({
     email: DataTypes.STRING,
-    username: DataTypes.STRING,
     password: DataTypes.STRING,
     name: DataTypes.STRING,
     address: DataTypes.STRING,
-    phone: DataTypes.INTEGER
+    phone: DataTypes.INTEGER,
+    image: DataTypes.TEXT
   }, {
     sequelize,
     modelName: 'tb_users',
