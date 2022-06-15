@@ -14,7 +14,7 @@ module.exports = {
       res.status(401).json({
         error: err.message,
         message: "Unauthorized. You must login first to perform this action!"
-      })
+      });
     }
   }
 }
