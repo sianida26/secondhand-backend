@@ -20,6 +20,9 @@ module.exports = {
         allowNull: false,
         type: Sequelize.STRING
       },
+      city: {
+        type: Sequelize.STRING
+      },
       address: {
         type: Sequelize.STRING
       },
