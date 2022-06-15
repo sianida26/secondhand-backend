@@ -9,6 +9,7 @@ module.exports = {
         type: Sequelize.INTEGER
       },
       buyerId: {
+        allowNull: false,
         type: Sequelize.INTEGER,
         references: {
           model: {
@@ -18,6 +19,7 @@ module.exports = {
         }
       },
       productId: {
+        allowNull: false,
         type: Sequelize.INTEGER,
         references: {
           model: {
@@ -27,6 +29,7 @@ module.exports = {
         }
       },
       bidPrice: {
+        allowNull: false,
         type: Sequelize.INTEGER
       },
       acceptedAt: {

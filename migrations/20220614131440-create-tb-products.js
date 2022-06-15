@@ -9,9 +9,11 @@ module.exports = {
         type: Sequelize.INTEGER
       },
       name: {
+        allowNull: false,
         type: Sequelize.STRING
       },
       price: {
+        allowNull: false,
         type: Sequelize.INTEGER
       },
       category: {
@@ -24,6 +26,7 @@ module.exports = {
         type: Sequelize.TEXT
       },
       createdBy: {
+        allowNull: false,
         type: Sequelize.INTEGER,
         references: {
           model: {
