@@ -26,7 +26,7 @@ const handleLogin = async (req, res) => {
     const accessToken = createToken(user);
 
     res.status(200).json({
-      email: user.name,
+      name: user.name,
       token: accessToken,
     });
   } catch (err) {
