@@ -13,21 +13,20 @@ const handleLogin = async (req, res) => {
 
     if (!user)
       return res.status(401).json({
-        message: 'Wrong Email/Password!',
+        message: 'Username atau password salah',
       });
 
     const isPasswordCorrect = verifyPassword(password, user.password);
 
     if (!isPasswordCorrect)
       return res.status(401).json({
-        message: 'Wrong Email/Password!',
+        message: 'Username atau password salah',
       });
 
     const accessToken = createToken(user);
 
     res.status(200).json({
-      email: user.email,
-      message: 'Login SUCCESS',
+      email: user.name,
       token: accessToken,
     });
   } catch (err) {
