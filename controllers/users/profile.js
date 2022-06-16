@@ -46,8 +46,8 @@ module.exports = {
       });
     }
 
-    const userName = await Users.findOne({ where: { id: req.params.id } });
-    if (userName && userName.name != name) {
+    const userInfo = await Users.findOne({ where: { id: req.params.id } });
+    if (userInfo && userInfo.name != name) {
       // throw new Error('User already exist');
       return res.status(400).json({
         status: "Failed",
@@ -56,8 +56,7 @@ module.exports = {
       });
     }
 
-    const userPhone = await Users.findOne({ where: { phone: phone } });
-    if (userPhone) {
+    if (userInfo && userInfo.phone != phone) {
       return res.status(400).json({
         status: "Failed",
         message: "Terdapat data yang tidak sesuai.",
