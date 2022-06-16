@@ -2,9 +2,9 @@
 const {
   Model
 } = require('sequelize');
-const { tb_users } = require('./index');
+const { Products, Users } = require('./index');
 module.exports = (sequelize, DataTypes) => {
-  class tb_products extends Model {
+  class Bids extends Model {
     /**
      * Helper method for defining associations.
      * This method is not a part of Sequelize lifecycle.
@@ -14,22 +14,28 @@ module.exports = (sequelize, DataTypes) => {
       // define association here
     }
   }
-  tb_products.init({
-    name: DataTypes.STRING,
-    price: DataTypes.INTEGER,
-    category: DataTypes.STRING,
-    description: DataTypes.STRING,
-    filenames: DataTypes.TEXT,
-    createdBy: {
+  Bids.init({
+    buyerId: {
       type: DataTypes.INTEGER,
       references: {
-        model: tb_users,
+        model: Users,
         key: 'id'
       }
-    }
+    },
+    productId: {
+      type: DataTypes.INTEGER,
+      references: {
+        model: Products,
+        key: 'id'
+      }
+    },
+    bidPrice: DataTypes.INTEGER,
+    acceptedAt: DataTypes.DATE,
+    declinedAt: DataTypes.DATE,
+    soldAt: DataTypes.DATE
   }, {
     sequelize,
-    modelName: 'tb_products',
+    modelName: 'Bids',
   });
-  return tb_products;
+  return Bids;
 };
