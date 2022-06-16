@@ -2,7 +2,7 @@ const { Products } = require('../../models');
 
 module.exports = {
   async getProduct(req, res) {
-    const getAllProducts =  await Products.findAndCountAll().then((allProducts) => {
+    const getAllProducts = await Products.findAndCountAll({ include: ['users'] }).then((allProducts) => {
       res.status(200).json({
         status: "Success",
         data: allProducts.rows,
@@ -17,7 +17,7 @@ module.exports = {
   },
 
   async getProductbyId(req, res) {
-    const productId = await Products.findOne({ where: { id: req.params.id } }).then((productId) => {
+    const productId = await Products.findOne({ where: { id: req.params.id }, include: ['users'] }).then((productId) => {
       res.status(200).json({
         status: "Success",
         data: productId
