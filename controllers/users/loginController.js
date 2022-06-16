@@ -1,6 +1,6 @@
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
-const JWT_SIGNATURE_KEY = process.env.JWT_SIGNATURE_KEY;
+const JWT_KEY = process.env.JWT_KEY || 'Rahasia';
 
 const { Users } = require('../../models');
 const userModel = Users;
@@ -37,6 +37,14 @@ const handleLogin = async (req, res) => {
   }
 };
 
+const handleGetUser = async (req, res) => {
+  const user = await userModel.findByPk(req.user.id);
+
+  res.status(200).json({
+    user,
+  });
+};
+
 const verifyPassword = (password, encriptedPassword) => {
   return bcrypt.compareSync(password, encriptedPassword);
 };
@@ -48,8 +56,8 @@ const createToken = (user) => {
       name: user.name,
       email: user.email,
     },
-    JWT_SIGNATURE_KEY
+    JWT_KEY
   );
 };
 
-module.exports = { handleLogin };
+module.exports = { handleLogin, handleGetUser };
