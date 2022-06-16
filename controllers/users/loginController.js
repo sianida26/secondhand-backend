@@ -40,6 +40,13 @@ const handleLogin = async (req, res) => {
 const handleGetUser = async (req, res) => {
   const user = await userModel.findByPk(req.user.id);
 
+  if (!user) {
+    res.status(404).json({
+      name: user.name,
+      message: 'User not found!',
+    });
+  }
+
   res.status(200).json({
     user,
   });
