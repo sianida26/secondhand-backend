@@ -46,8 +46,11 @@ module.exports = {
       });
     }
 
-    const userInfo = await Users.findOne({ where: { id: req.params.id } });
-    if (userInfo.name && userInfo.name != name) {
+    const userInfo = await Users.findByPk(req.params.id);
+    const userName = await Users.findOne({ where: { name: name } });
+    const userPhone = await Users.findOne({ where: { phone: phone } });
+
+    if (userName && userInfo.name != name) {
       // throw new Error('User already exist');
       return res.status(400).json({
         status: "Failed",
@@ -56,7 +59,7 @@ module.exports = {
       });
     }
 
-    if (userInfo.phone && userInfo.phone != phone) {
+    if (userPhone && userInfo.phone != phone) {
       return res.status(400).json({
         status: "Failed",
         message: "Terdapat data yang tidak sesuai.",
