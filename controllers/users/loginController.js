@@ -38,4 +38,8 @@ const handleLogin = async (req, res) => {
   }
 };
 
+const verifyPassword = (password, encriptedPassword) => {
+  return bcrypt.compareSync(password, encriptedPassword);
+};
+
 module.exports = { handleLogin };
