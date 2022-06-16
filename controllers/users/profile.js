@@ -1,8 +1,8 @@
-const { Users } = require('../../models');
+const { Users, Products } = require('../../models');
 
 module.exports = {
   async getUserId(req, res) {
-    const user = await Users.findByPk(req.params.id).then((userData) => {
+    const user = await Users.findByPk(req.params.id, { include: ['products'] }).then((userData) => {
       if (!userData) {
         return res.status(404).json({
           status: "Failed",
