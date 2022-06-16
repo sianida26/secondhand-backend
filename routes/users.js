@@ -12,6 +12,7 @@ router.get('/', function (req, res, next) {
 
 router.post('/login', users.loginController.handleLogin);
 router.post('/register', middlewares.registerRules.checkCondition, users.register.register);
+router.get('/whoami', middlewares.authorization.authorize, users.loginController.handleGetUser);
 
 router.get('/data/:id', middlewares.authorization.authorize, users.profile.getUserId);
 router.put('/data/:id', middlewares.authorization.authorize, users.profile.editUserId);
