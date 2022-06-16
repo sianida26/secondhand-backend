@@ -42,4 +42,15 @@ const verifyPassword = (password, encriptedPassword) => {
   return bcrypt.compareSync(password, encriptedPassword);
 };
 
+const createToken = (user) => {
+  return jwt.sign(
+    {
+      id: user.id,
+      name: user.name,
+      email: user.email,
+    },
+    JWT_SIGNATURE_KEY
+  );
+};
+
 module.exports = { handleLogin };
