@@ -1,10 +1,18 @@
-const { tb_users } = require('../../models');
+const { Users } = require('../../models');
 
 module.exports = {
   async getUserId(req, res) {
-    const user = await tb_users.findByPk(req.params.id).then((userData) => {
+    const user = await Users.findByPk(req.params.id).then((userData) => {
+      if (!userData) {
+        return res.status(404).json({
+          status: "Failed",
+          message: `User with id ${req.params.id} not found!`
+        });
+      }
+
       res.status(200).json({
         status: "Success",
+        message: "OK",
         data: userData
       })
     }).catch((err) => {
@@ -13,52 +21,69 @@ module.exports = {
         message: err.message
       })
     });
-
-    if (!user) {
-      return res.status(404).json({
-        status: "Failed",
-        message: `User with id ${req.params.id} not found!`
-      });
-    }
   },
 
   async editUserId(req, res) {
-    const { name, city, address, phone } = req.body;
-    
-    const userName = await tb_users.findOne({ where: { name: name } });
-    if (userName) {
+    const { name, city, address, phone, filenames } = req.body;
+    if (!name || !city || !address || !phone) {
+      return res.status(400).json({
+        status: "Failed",
+        message: "Terdapat data yang tidak sesuai.",
+        errors: {
+          name: name ? "" : "Nama harus diisi!",
+          city: city ? "" : "Kota harus diisi!",
+          address: address ? "" : "Alamat harus diisi!",
+          phone: phone ? "" : "No. Handphone harus diisi!"
+        }
+      });
+    }
+
+    if (phone.length < 9) {
+      return res.status(400).json({
+        status: "Failed",
+        message: "Terdapat data yang tidak sesuai.",
+        errors: "No. Handphone minimal 9 karakter"
+      });
+    }
+
+    const userName = await Users.findOne({ where: { id: req.params.id } });
+    if (userName && userName.name != name) {
       // throw new Error('User already exist');
       return res.status(400).json({
         status: "Failed",
-        message: "Name already exist!"
+        message: "Terdapat data yang tidak sesuai.",
+        errors: "Nama sudah ada!"
       });
     }
 
-    const userPhone = await tb_users.findOne({ where: { phone: phone } });
+    const userPhone = await Users.findOne({ where: { phone: phone } });
     if (userPhone) {
       return res.status(400).json({
         status: "Failed",
-        message: "Phone already exist!"
+        message: "Terdapat data yang tidak sesuai.",
+        errors: "No. Handphone sudah ada!"
       });
     }
 
-    await tb_users.update({
+    await Users.update({
       name,
       city,
       address,
-      phone
+      phone,
+      filenames
     }, {
       where: { id: req.params.id}
     }).then(() => {
-      res.status(200).json({
+      res.status(201).json({
         status: "Success",
         message: `User with id ${req.params.id} has been updated!`
       })
     }).catch((err) => {
       res.status(400).json({
         status: "Failed",
-        message: err.message
+        message: "Terdapat data yang tidak sesuai.",
+        error: err.message
       })
     });
   }
-}
+};

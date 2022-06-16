@@ -1,22 +1,24 @@
 const bcrypt = require('bcryptjs');
-const { tb_users } = require('../../models');
+const jwt = require('jsonwebtoken');
+const { Users } = require('../../models');
 
 module.exports = {
   async register(req, res) {
     const { email, password, name } = req.body;
     const hashedPassword = await bcrypt.hash(password, 10);
 
-    await tb_users.create({
+    await Users.create({
       email: email.toLowerCase(),
       password: hashedPassword,
       name
     }).then((createUser) => {
+      const token = jwt.sign({ id: createUser.id, name: name }, process.env.JWT_KEY || "qwerty", { expiresIn: '1h' });
       res.status(201).json({
         status: "Success",
-        message: "User is already registered!",
+        message: "OK",
         data: {
-          id: createUser.id,
-          email: createUser.email
+          name: createUser.name,
+          token: token
         }
       })
     }).catch((err) => {
@@ -26,4 +28,5 @@ module.exports = {
       })
     });
   }
-}
+};
+
