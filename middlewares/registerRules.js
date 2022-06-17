@@ -5,7 +5,6 @@ module.exports = {
     const { email, password, name } = req.body;
     if (!email || !password || !name) {
       return res.status(422).json({
-        status: "Failed",
         message: "Terdapat data yang tidak sesuai.",
         errors: {
           email: email ? undefined : "Email harus diisi!",
@@ -17,7 +16,6 @@ module.exports = {
 
     if (password.length < 5) {
       return res.status(422).json({
-        status: "Failed",
         message: "Terdapat data yang tidak sesuai.",
         errors: {
           password: "Password minimal 5 karakter!"
@@ -28,7 +26,6 @@ module.exports = {
     const filter = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/g;
     if (email.search(filter) == -1) {
       return res.status(422).json({
-        status: "Failed",
         message: "Terdapat data yang tidak sesuai.",
         errors: {
           email: "Format email salah!"
@@ -40,7 +37,6 @@ module.exports = {
     if (userEmail) {
       // throw new Error('User already exist');
       return res.status(422).json({
-        status: "Failed",
         message: "Terdapat data yang tidak sesuai.",
         errors: {
           email: "Email sudah ada!"

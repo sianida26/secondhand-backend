@@ -15,16 +15,11 @@ module.exports = {
     }).then((createUser) => {
       const token = jwt.sign({ id: createUser.id, name: name, email: email }, JWT_KEY);
       res.status(201).json({
-        status: "Success",
-        message: "OK",
-        data: {
-          name: createUser.name,
-          token: token
-        }
+        name: createUser.name,
+        token: token
       })
     }).catch((err) => {
       res.status(422).json({
-        status: "Failed",
         message: "Terdapat data yang tidak sesuai.",
         errors: err.message
       })
