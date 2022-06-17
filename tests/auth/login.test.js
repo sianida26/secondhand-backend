@@ -15,7 +15,7 @@ describe('POST /users/login', () => {
       .set('Content-Type', 'application/json')
       .send({ email, password })
       .then((res) => {
-        expect(res.statusCode).toBe(201);
+        expect(res.statusCode).toBe(200);
         expect(res.body).toEqual(
           expect.objectContaining({
             ...res.body,
