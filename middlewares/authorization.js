@@ -1,4 +1,5 @@
 const jwt = require('jsonwebtoken');
+const JWT_KEY = process.env.JWT_KEY || 'qwerty';
 const { Users } = require('../models');
 
 module.exports = {
@@ -9,18 +10,18 @@ module.exports = {
       if (!token) {
         return res.status(401).json({
           status: "Failed",
-          message: "Unauthorized. Token is required!"
+          message: "Unauthenticated. Token is required!"
         });
       }
 
-      const tokenPayLoad = jwt.verify(token, process.env.JWT_KEY || "qwerty");
+      const tokenPayLoad = jwt.verify(token, JWT_KEY);
       req.user = await Users.findByPk(tokenPayLoad.id);
 
       next();
     } catch (err) {
       res.status(401).json({
         status: "Failed",
-        message: "Unauthorized. Invalid token!",
+        message: "Unauthenticated. Invalid token!",
         error: err.message
       });
     }
