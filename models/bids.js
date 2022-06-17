@@ -12,6 +12,14 @@ module.exports = (sequelize, DataTypes) => {
      */
     static associate(models) {
       // define association here
+      Bids.belongsTo(models.Users, {
+        foreignKey: 'buyerId',
+        as: 'users'
+      });
+      Bids.belongsTo(models.Products, {
+        foreignKey: 'productId',
+        as: 'products'
+      });
     }
   }
   Bids.init({
