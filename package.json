@@ -3,22 +3,30 @@
   "version": "0.0.0",
   "private": true,
   "scripts": {
-    "start": "node ./bin/www"
+    "start": "node ./bin/www",
+    "develop": "nodemon ./bin/www",
+    "test": "jest --watchAll"
   },
   "dependencies": {
     "bcryptjs": "^2.4.3",
-    "cookie-parser": "~1.4.4",
-    "debug": "~2.6.9",
+    "cookie-parser": "^1.4.6",
+    "cors": "^2.8.5",
+    "debug": "^4.3.4",
     "dotenv": "^16.0.1",
-    "express": "~4.16.1",
+    "express": "^4.18.1",
     "jsonwebtoken": "^8.5.1",
-    "morgan": "~1.9.1",
+    "morgan": "^1.10.0",
     "pg": "^8.7.3",
     "sequelize": "^6.20.1",
-    "sequelize-cli": "^6.4.1"
+    "sequelize-cli": "^6.4.1",
+    "swagger-ui-express": "^4.4.0"
   },
   "engines": {
     "npm": "cuma-bisa-pake-yarn",
     "yarn": ">=1.19.1"
+  },
+  "devDependencies": {
+    "jest": "^28.1.1",
+    "supertest": "^6.2.3"
   }
 }
