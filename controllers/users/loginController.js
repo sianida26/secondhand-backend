@@ -25,7 +25,7 @@ const handleLogin = async (req, res) => {
 
     const accessToken = createToken(user);
 
-    res.status(200).json({
+    res.status(201).json({
       name: user.name,
       token: accessToken,
     });
@@ -48,7 +48,8 @@ const handleGetUser = async (req, res) => {
   }
 
   res.status(200).json({
-    user,
+    name: user.name,
+    email: user.email,
   });
 };
 
