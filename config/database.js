@@ -1,4 +1,3 @@
-// const { DB_USERNAME = 'postgres', DB_PASSWORD = 'root', DB_NAME = 'db_secondhand', DB_HOST = 'localhost', DB_PORT = '5432', DB_DIALECT = 'postgres' } = process.env;
 require('dotenv').config();
 
 module.exports = {
