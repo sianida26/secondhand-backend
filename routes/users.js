@@ -10,6 +10,6 @@ router.get('/', function(req, res, next) {
 });
 router.post('/register', middlewares.registerRules.checkCondition, users.register.register);
 router.get('/data/:id', middlewares.authorization.authorize, users.profile.getUserId);
-router.put('/data/:id', middlewares.authorization.authorize, users.profile.editUserId);
+router.put('/lengkapi-profil', middlewares.authorization.authorize, users.profile.editUserId);
 
 module.exports = router;
