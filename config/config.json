@@ -1,21 +1,21 @@
 {
   "development": {
     "username": "postgres",
-    "password": "qwerty12",
+    "password": "root",
     "database": "db_secondhand",
     "host": "localhost",
     "dialect": "postgres"
   },
   "test": {
     "username": "postgres",
-    "password": "qwerty12",
+    "password": "root",
     "database": "db_secondhand",
     "host": "localhost",
     "dialect": "postgres"
   },
   "production": {
     "username": "postgres",
-    "password": "qwerty12",
+    "password": "root",
     "database": "db_secondhand",
     "host": "localhost",
     "dialect": "postgres"

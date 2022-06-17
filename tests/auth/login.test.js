@@ -20,7 +20,7 @@ describe('POST /users/login', () => {
           expect.objectContaining({
             ...res.body,
             name: user.name,
-            token: res.body.token,
+            accessToken: res.body.accessToken,
           })
         );
       });
