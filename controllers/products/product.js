@@ -43,11 +43,16 @@ module.exports = {
     const token = req.headers.authorization.split("Bearer ")[1];
     const tokenPayLoad = jwt.verify(token, JWT_KEY);
 
-    const myProducts = await Products.findAndCountAll({ where: { createdBy: tokenPayLoad.id }, include: [{
-      model: Bids,
-      as: 'bids',
-      include: ['users']
-    }] }).then((allMyProducts) => {
+    const myProducts = await Products.findAndCountAll({
+      where: {
+        createdBy: tokenPayLoad.id
+      },
+      include: [{
+        model: Bids,
+        as: 'bids',
+        include: ['users']
+      }]
+    }).then((allMyProducts) => {
       return {
         data: allMyProducts.rows,
         count: allMyProducts.count
@@ -58,6 +63,12 @@ module.exports = {
       })
     });
 
+    myProducts.data.sort((a, b) => {
+      let dateA = new Date(a.date).getTime();
+      let dateB = new Date(b.date).getTime();
+      return dateB - dateA;
+    });
+
     let products = [];
     let interestedProducts = [];
     let soldProducts = [];
@@ -65,9 +76,9 @@ module.exports = {
     myProducts.data.map((product) => {
       products.push({
         id: product.id,
-        image: product.filenames,
         productName: product.name,
-        price: product.price
+        price: product.price,
+        image: product.filenames
       });
 
       if (product.bids != '') {
@@ -75,9 +86,9 @@ module.exports = {
           if (bid.bidPrice && !bid.soldAt) {
             interestedProducts.push({
               id: bid.id,
-              image: product.filenames,
               productName: product.name,
               price: product.price,
+              image: product.filenames,
               buyerName: bid.users.name,
               buyerPics: bid.users.image,
               bidPrice: bid.bidPrice
@@ -87,12 +98,13 @@ module.exports = {
           if (bid.soldAt) {
             soldProducts.push({
               id: product.id,
-              image: product.filenames,
               productName: product.name,
               price: product.price,
+              image: product.filenames,
               buyerName: bid.users.name,
               buyerPics: bid.users.image,
-              bidPrice: product.bids.bidPrice
+              bidPrice: bid.bidPrice,
+              soldAt: bid.soldAt
             });
           }
         });
