@@ -74,17 +74,27 @@ module.exports = {
 
   async handleCreateProduct(req, res) {
     const { name, price, category, description, filenames, createdBy } = req.body;
+    // const { filenames } = req.file;
 
-    await Products.create({
-      name,
-      price,
-      category,
-      description,
-      filenames,
-      createdBy,
-    });
+    console.log('filenames', filenames);
+
+    // if (!req.file) {
+    //   res.status(422).json({
+    //     message: 'Semua input harus diisi',
+    //   });
+    // }
+
+    // await Products.create({
+    //   name,
+    //   price,
+    //   category,
+    //   description,
+    //   filenames,
+    //   createdBy,
+    // });
 
     res.status(200).json({
+      product: filenames,
       message: 'Produk berhasil diterbitkan',
     });
   },

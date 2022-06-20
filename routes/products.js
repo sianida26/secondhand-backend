@@ -1,17 +1,18 @@
 var express = require('express');
 var router = express.Router();
+
 const middlewares = require('../middlewares');
 const products = require('../controllers/products');
 
-/* GET users listing. */
 router.get('/', function (req, res, next) {
-  res.send('respond with a resource');
+  res.send('Products');
 });
-router.get('/all', middlewares.authorization.authorize, products.product.getProduct);
-router.get('/:id', middlewares.authorization.authorize, products.product.getProductbyId);
-router.get('/user/:id', middlewares.authorization.authorize, products.product.getMyProduct);
-router.get('/user/:user/:id', middlewares.authorization.authorize, products.product.getMyProductbyId);
 
-router.post('/', products.product.handleCreateProduct);
+router.get('/all', middlewares.authorization.authorize, products.getProduct);
+router.get('/:id', middlewares.authorization.authorize, products.getProductbyId);
+router.get('/user/:id', middlewares.authorization.authorize, products.getMyProduct);
+router.get('/user/:user/:id', middlewares.authorization.authorize, products.getMyProductbyId);
+
+router.post('/products', products.handleCreateProduct);
 
 module.exports = router;
