@@ -1,5 +1,5 @@
-const profile = require('./profile');
-const register = require('./register');
+const profile = require('./profileController');
+const register = require('./registerController');
 
 module.exports = {
   profile,
