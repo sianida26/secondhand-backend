@@ -23,7 +23,6 @@
     "swagger-ui-express": "^4.4.0"
   },
   "engines": {
-    "npm": "cuma-bisa-pake-yarn",
     "yarn": ">=1.19.1"
   },
   "devDependencies": {
