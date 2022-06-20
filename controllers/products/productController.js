@@ -4,17 +4,29 @@ const { Products, Bids } = require('../../models');
 
 module.exports = {
   async handleGetAllProducts(req, res) {
-    const getAllProducts = await Products.findAndCountAll({ include: ['users'] }).then((allProducts) => {
+    // await Products.findAndCountAll({ include: ['users'] }).then((allProducts) => {
+    //   res.status(200).json({
+    //     data: allProducts.rows,
+    //     count: allProducts.count
+    //   })
+    // }).catch((err) => {
+    //   res.status(400).json({
+    //     status: "Failed",
+    //     message: err.message
+    //   })
+    // });
+    try {
+      const products = await Products.findAndCountAll({ include: ['users'] });
       res.status(200).json({
-        data: allProducts.rows,
-        count: allProducts.count
-      })
-    }).catch((err) => {
+        data: products.rows,
+        count: products.count
+      });
+    } catch (err) {
       res.status(400).json({
         status: "Failed",
         message: err.message
       })
-    });
+    }
   },
 
   async handleGetProductbyId(req, res) {
@@ -62,22 +74,22 @@ module.exports = {
       })
     });
 
-    myProducts.data.sort((a, b) => {
-      let dateA = new Date(a.updatedAt).getTime();
-      let dateB = new Date(b.updatedAt).getTime();
-      return dateB - dateA;
-    });
+    myProducts.data.sort((a, b) => new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime());
 
     let products = [];
     let interestedProducts = [];
     let soldProducts = [];
+
+
+    //product.filename
+    //'["gambar1.png","gamabr2.jpg","gambar3.jpg","gambar8000.jpg"]'
 
     myProducts.data.map((product) => {
       products.push({
         id: product.id,
         productName: product.name,
         price: product.price,
-        image: product.filenames
+        image: product.filenames.map(filename => `https://balbalbla.com/uploads/${filename}`),
       });
 
       if (product.bids != '') {
