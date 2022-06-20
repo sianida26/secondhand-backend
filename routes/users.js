@@ -15,8 +15,7 @@ router.get('/', function(req, res, next) {
   res.send('respond with a resource');
 });
 
-router.post('/register', middlewares.registerRules.checkCondition, users.register.register);
-router.put('/lengkapi-profil', middlewares.authorization.authorize, users.profile.editUserId);
-// router.get('/data/:id', middlewares.authorization.authorize, users.profile.getUserId);
+router.post('/register', middlewares.registerRules.checkCondition, users.register.handleRegister);
+router.post('/lengkapi-profil', middlewares.authorization.authorize, users.profile.editUserId);
 
 module.exports = router;
