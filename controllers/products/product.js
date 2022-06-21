@@ -73,29 +73,35 @@ module.exports = {
   },
 
   async handleCreateProduct(req, res) {
-    const { name, price, category, description, filenames, createdBy } = req.body;
-    // const { filenames } = req.file;
+    try {
+      const { name, price, category, description, createdBy } = req.body;
+      const filenames = req.files['filenames'].map((e) => e.filename);
+      const files = JSON.stringify(filenames);
 
-    console.log('filenames', filenames);
+      if (!req.files && !req.body) {
+        res.status(422).json({
+          message: 'Semua input harus diisi',
+        });
+      }
 
-    // if (!req.file) {
-    //   res.status(422).json({
-    //     message: 'Semua input harus diisi',
-    //   });
-    // }
+      await Products.create({
+        name,
+        price,
+        category,
+        description,
+        filenames: files,
+        createdBy: req.user.id,
+      });
 
-    // await Products.create({
-    //   name,
-    //   price,
-    //   category,
-    //   description,
-    //   filenames,
-    //   createdBy,
-    // });
-
-    res.status(200).json({
-      product: filenames,
-      message: 'Produk berhasil diterbitkan',
-    });
+      res.status(200).json({
+        product: { name, filenames },
+        message: 'Produk berhasil diterbitkan',
+      });
+    } catch (err) {
+      return res.status(500).json({
+        name: err.name,
+        message: err.message,
+      });
+    }
   },
 };
