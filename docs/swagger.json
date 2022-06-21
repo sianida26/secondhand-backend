@@ -2,7 +2,7 @@
   "swagger": "2.0",
   "info": {
     "title": "SecondHand API",
-    "version": "db_migrate",
+    "version": "v1",
     "contact": {
       "name": "SecondHand API",
       "url": "https://github.com/sianida26/secondhand-backend/"
@@ -48,6 +48,7 @@
         "tags": ["Auth"]
       }
     },
+<<<<<<< HEAD
     "/users/register": {
       "post": {
         "summary": "Register",
@@ -86,11 +87,27 @@
         "description": "Retrieve list of my products",
         "operationId": "listMyProducts",
         "security": [{ "BearerTokenAuth": [] }],
+=======
+    "/users/whoami": {
+      "get": {
+        "summary": "Who Am I",
+        "description": "Retrieve current user info",
+        "operationId": "whoami",
+        "security": [
+          {
+            "BearerTokenAuth": []
+          }
+        ],
+>>>>>>> main
         "responses": {
           "200": {
             "description": "A successful response.",
             "schema": {
+<<<<<<< HEAD
               "$ref": "#/definitions/coreListMyProductsResponse"
+=======
+              "$ref": "#/definitions/coreWhoAmIResponse"
+>>>>>>> main
             }
           },
           "default": {
@@ -127,6 +144,7 @@
         }
       }
     },
+<<<<<<< HEAD
     "coreRegisterRequest": {
       "type": "object",
       "properties": {
@@ -142,11 +160,15 @@
       }
     },
     "coreRegisterResponse": {
+=======
+    "coreWhoAmIResponse": {
+>>>>>>> main
       "type": "object",
       "properties": {
         "name": {
           "type": "string"
         },
+<<<<<<< HEAD
         "token": {
           "type": "string"
         }
@@ -248,6 +270,10 @@
         "soldAt": {
           "type": "string",
           "format": "date-time"
+=======
+        "email": {
+          "type": "string"
+>>>>>>> main
         }
       }
     },

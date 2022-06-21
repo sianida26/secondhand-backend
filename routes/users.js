@@ -19,5 +19,9 @@ const upload = multer({ storage: storage })
 
 router.post('/lengkapi-profil',[middlewares.authorization.authorize, upload.single('file') ], users.profile.editUserId);
 router.post('/register', middlewares.registerRules.checkCondition, users.register.handleRegister);
+router.get('/whoami', middlewares.authorization.authorize, users.loginController.handleGetUser);
+
+router.get('/data/:id', middlewares.authorization.authorize, users.profile.getUserId);
+router.put('/data/:id', middlewares.authorization.authorize, users.profile.editUserId);
 
 module.exports = router;
