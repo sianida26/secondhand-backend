@@ -2,7 +2,7 @@
   "swagger": "2.0",
   "info": {
     "title": "SecondHand API",
-    "version": "feat_login",
+    "version": "v1",
     "contact": {
       "name": "SecondHand API",
       "url": "https://github.com/sianida26/secondhand-backend/"
@@ -11,6 +11,9 @@
   "tags": [
     {
       "name": "Auth"
+    },
+    {
+      "name": "Products"
     }
   ],
   "consumes": ["application/json"],
@@ -74,6 +77,67 @@
         },
         "tags": ["Auth"]
       }
+    },
+    "/products": {
+      "post": {
+        "summary": "Create Product",
+        "description": "Add new product to Database",
+        "operationId": "createProduct",
+        "consumes": ["multipart/form-data"],
+        "security": [
+          {
+            "BearerTokenAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/coreCreateProductResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "name",
+            "in": "formData",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "price",
+            "in": "formData",
+            "required": true,
+            "type": "integer",
+            "format": "int32"
+          },
+          {
+            "name": "category",
+            "in": "formData",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "description",
+            "in": "formData",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "filenames",
+            "in": "formData",
+            "required": true,
+            "type": "file"
+          }
+        ],
+        "tags": ["Products"]
+      }
     }
   },
   "definitions": {
@@ -95,6 +159,34 @@
           "type": "string"
         },
         "accessToken": {
+          "type": "string"
+        }
+      }
+    },
+    "coreCreateProductRequest": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "price": {
+          "type": "string"
+        },
+        "category": {
+          "type": "string"
+        },
+        "description": {
+          "type": "string"
+        },
+        "filenames": {
+          "type": "string"
+        }
+      }
+    },
+    "coreCreateProductResponse": {
+      "type": "object",
+      "properties": {
+        "message": {
           "type": "string"
         }
       }
