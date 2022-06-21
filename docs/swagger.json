@@ -48,7 +48,6 @@
         "tags": ["Auth"]
       }
     },
-<<<<<<< HEAD
     "/users/register": {
       "post": {
         "summary": "Register",
@@ -81,13 +80,6 @@
         "tags": ["Auth"]
       }
     },
-    "/products/my-products": {
-      "get": {
-        "summary": "List my products",
-        "description": "Retrieve list of my products",
-        "operationId": "listMyProducts",
-        "security": [{ "BearerTokenAuth": [] }],
-=======
     "/users/whoami": {
       "get": {
         "summary": "Who Am I",
@@ -98,16 +90,11 @@
             "BearerTokenAuth": []
           }
         ],
->>>>>>> main
         "responses": {
           "200": {
             "description": "A successful response.",
             "schema": {
-<<<<<<< HEAD
-              "$ref": "#/definitions/coreListMyProductsResponse"
-=======
               "$ref": "#/definitions/coreWhoAmIResponse"
->>>>>>> main
             }
           },
           "default": {
@@ -144,7 +131,6 @@
         }
       }
     },
-<<<<<<< HEAD
     "coreRegisterRequest": {
       "type": "object",
       "properties": {
@@ -160,15 +146,11 @@
       }
     },
     "coreRegisterResponse": {
-=======
-    "coreWhoAmIResponse": {
->>>>>>> main
       "type": "object",
       "properties": {
         "name": {
           "type": "string"
         },
-<<<<<<< HEAD
         "token": {
           "type": "string"
         }
@@ -270,10 +252,6 @@
         "soldAt": {
           "type": "string",
           "format": "date-time"
-=======
-        "email": {
-          "type": "string"
->>>>>>> main
         }
       }
     },
