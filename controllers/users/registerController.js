@@ -1,9 +1,10 @@
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
+const JWT_KEY = process.env.JWT_KEY || 'qwerty';
 const { Users } = require('../../models');
 
 module.exports = {
-  async register(req, res) {
+  async handleRegister(req, res) {
     const { email, password, name } = req.body;
     const hashedPassword = await bcrypt.hash(password, 10);
 
@@ -12,21 +13,16 @@ module.exports = {
       password: hashedPassword,
       name
     }).then((createUser) => {
-      const token = jwt.sign({ id: createUser.id, name: name }, process.env.JWT_KEY || "qwerty", { expiresIn: '1h' });
+      const token = jwt.sign({ id: createUser.id, name: name, email: email }, JWT_KEY);
       res.status(201).json({
-        status: "Success",
-        message: "OK",
-        data: {
-          name: createUser.name,
-          token: token
-        }
+        name: createUser.name,
+        token: token
       })
     }).catch((err) => {
-      res.status(400).json({
-        status: "Failed",
-        message: err.message
+      res.status(422).json({
+        message: "Terdapat data yang tidak sesuai.",
+        errors: err.message
       })
     });
   }
 };
-

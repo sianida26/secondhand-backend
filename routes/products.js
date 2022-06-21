@@ -7,10 +7,10 @@ const products = require('../controllers/products');
 router.get('/', function (req, res, next) {
   res.send('respond with a resource');
 });
-router.get('/all', middlewares.authorization.authorize, products.product.getProduct);
-router.get('/:id', middlewares.authorization.authorize, products.product.getProductbyId);
-router.get('/user/:id', middlewares.authorization.authorize, products.product.getMyProduct);
-router.get('/user/:user/:id', middlewares.authorization.authorize, products.product.getMyProductbyId);
+
+router.get('/all', middlewares.authorization.authorize, products.product.handleGetAllProducts);
+router.get('/my-products', middlewares.authorization.authorize, products.product.handleListMyProducts);
+router.get('/detail/:id', middewares.authorization.authorize, products.product.handleGetProductbyId);
 
 router.post('/', products.product.handleCreateProduct);
 

@@ -2,7 +2,7 @@ const { Users } = require('../../models');
 
 module.exports = {
   async getUserId(req, res) {
-    const user = await Users.findByPk(req.params.id).then((userData) => {
+    const user = await Users.findByPk(req.params.id, { include: ['products'] }).then((userData) => {
       if (!userData) {
         return res.status(404).json({
           status: "Failed",
@@ -24,16 +24,18 @@ module.exports = {
   },
 
   async editUserId(req, res) {
-    const { name, city, address, phone, filenames } = req.body;
-    if (!name || !city || !address || !phone) {
+    const { name, city, address, phone } = req.body;
+
+    //Validasi input user
+    if (!(name && city && address && phone)) {
       return res.status(400).json({
         status: "Failed",
         message: "Terdapat data yang tidak sesuai.",
         errors: {
-          name: name ? "" : "Nama harus diisi!",
-          city: city ? "" : "Kota harus diisi!",
-          address: address ? "" : "Alamat harus diisi!",
-          phone: phone ? "" : "No. Handphone harus diisi!"
+          name: name ? undefined : "Nama harus diisi!",
+          city: city ? undefined : "Kota harus diisi!",
+          address: address ? undefined : "Alamat harus diisi!",
+          phone: phone ? undefined : "No. Handphone harus diisi!"
         }
       });
     }
@@ -46,30 +48,15 @@ module.exports = {
       });
     }
 
-    const userInfo = await Users.findOne({ where: { id: req.params.id } });
-    if (userInfo.name && userInfo.name != name) {
-      // throw new Error('User already exist');
-      return res.status(400).json({
-        status: "Failed",
-        message: "Terdapat data yang tidak sesuai.",
-        errors: "Nama sudah ada!"
-      });
-    }
+    // Handling file upload
 
-    if (userInfo.phone && userInfo.phone != phone) {
-      return res.status(400).json({
-        status: "Failed",
-        message: "Terdapat data yang tidak sesuai.",
-        errors: "No. Handphone sudah ada!"
-      });
-    }
 
     await Users.update({
       name,
       city,
       address,
       phone,
-      filenames
+      image: req.file ? req.file.filename : null
     }, {
       where: { id: req.params.id}
     }).then(() => {
