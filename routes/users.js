@@ -17,6 +17,7 @@ const storage = multer.diskStorage({
 // multer configuration for file upload
 const upload = multer({ storage: storage })
 
+router.post('/login', users.loginController.handleLogin);
 router.post('/lengkapi-profil',[middlewares.authorization.authorize, upload.single('file') ], users.profile.editUserId);
 router.post('/register', middlewares.registerRules.checkCondition, users.register.handleRegister);
 router.get('/whoami', middlewares.authorization.authorize, users.loginController.handleGetUser);
