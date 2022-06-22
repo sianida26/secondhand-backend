@@ -83,7 +83,8 @@
         "summary": "Create Product",
         "description": "Add new product to Database",
         "operationId": "createProduct",
-        "consumes": ["multipart/form-data"],
+        "consumes": ["application/x-www-form-urlencoded"],
+        "produces": ["application/json"],
         "security": [
           {
             "BearerTokenAuth": []
@@ -159,26 +160,6 @@
           "type": "string"
         },
         "accessToken": {
-          "type": "string"
-        }
-      }
-    },
-    "coreCreateProductRequest": {
-      "type": "object",
-      "properties": {
-        "name": {
-          "type": "string"
-        },
-        "price": {
-          "type": "string"
-        },
-        "category": {
-          "type": "string"
-        },
-        "description": {
-          "type": "string"
-        },
-        "filenames": {
           "type": "string"
         }
       }
