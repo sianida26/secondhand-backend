@@ -74,13 +74,20 @@ module.exports = {
 
   async handleCreateProduct(req, res) {
     try {
-      const { name, price, category, description, createdBy } = req.body;
+      const { name, price, category, description } = req.body;
+
+      if (!name || !price || !category || !description || !req.files['filenames']) {
+        return res.status(422).json({
+          message: 'Semua input harus diisi',
+        });
+      }
+
       const filenames = req.files['filenames'].map((e) => e.filename);
       const files = JSON.stringify(filenames);
 
-      if (!req.files && !req.body) {
-        res.status(422).json({
-          message: 'Semua input harus diisi',
+      if (filenames.length > 4) {
+        return res.status(422).json({
+          message: 'File maximal 4',
         });
       }
 
@@ -94,7 +101,6 @@ module.exports = {
       });
 
       res.status(200).json({
-        product: { name, filenames },
         message: 'Produk berhasil diterbitkan',
       });
     } catch (err) {
