@@ -24,6 +24,8 @@ module.exports = {
   },
 
   async editUserId(req, res) {
+    const token = req.headers.authorization.split("Bearer ")[1];
+    const tokenPayload = jwt.verify(token, JWT_KEY);
     const { name, city, address, phone } = req.body;
 
     //Validasi input user
@@ -48,21 +50,20 @@ module.exports = {
       });
     }
 
-    // Handling file upload
-
+    const userInfo = await Users.findByPk(tokenPayload.id);
 
     await Users.update({
       name,
       city,
       address,
       phone,
-      image: req.file ? req.file.filename : null
+      image: req.file ? req.file.filename : userInfo.image
     }, {
-      where: { id: req.params.id}
+      where: { id: tokenPayload.id }
     }).then(() => {
       res.status(201).json({
         status: "Success",
-        message: `User with id ${req.params.id} has been updated!`
+        message: `User with id ${tokenPayload.id} has been updated!`
       })
     }).catch((err) => {
       res.status(400).json({

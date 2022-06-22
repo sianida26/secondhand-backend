@@ -1,6 +1,6 @@
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
-const JWT_KEY = process.env.JWT_KEY || 'qwerty';
+const JWT_KEY = process.env.JWT_KEY || 'Rahasia';
 const { Users } = require('../../models');
 
 module.exports = {
