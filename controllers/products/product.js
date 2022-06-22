@@ -59,13 +59,13 @@ module.exports = {
       },
     })
       .then((productId) => {
-        res.status(200).json({
+        return res.status(200).json({
           status: 'Success',
           data: productId,
         });
       })
       .catch((err) => {
-        res.status(400).json({
+        return res.status(400).json({
           status: 'Failed',
           message: err.message,
         });
@@ -100,7 +100,7 @@ module.exports = {
         createdBy: req.user.id,
       });
 
-      res.status(200).json({
+      return res.status(200).json({
         message: 'Produk berhasil diterbitkan',
       });
     } catch (err) {

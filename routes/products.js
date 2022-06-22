@@ -14,7 +14,15 @@ const storage = multer.diskStorage({
   },
 });
 
-const upload = multer({ storage: storage });
+const fileFilter = (req, file, cb) => {
+  if (file.mimetype === 'image/jpeg' || file.mimetype === 'image/jpg' || file.mimetype === 'image/png') {
+    cb(null, true);
+  } else {
+    return cb(new Error('Gunakan format jpeg/jpg/png'));
+  }
+};
+
+const upload = multer({ storage: storage, fileFilter: fileFilter });
 const cpUpload = upload.fields([{ name: 'filenames', maxCount: 5 }]);
 
 router.get('/', function (req, res) {
