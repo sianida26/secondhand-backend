@@ -15,9 +15,9 @@ const storage = multer.diskStorage({
 });
 
 const upload = multer({ storage: storage });
-const cpUpload = upload.fields([{ name: 'filenames', maxCount: 4 }]);
+const cpUpload = upload.fields([{ name: 'filenames', maxCount: 5 }]);
 
-router.get('/', function (req, res, next) {
+router.get('/', function (req, res) {
   res.send('Products');
 });
 

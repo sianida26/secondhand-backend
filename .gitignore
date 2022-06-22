@@ -1,3 +1,6 @@
+images/products/*
+!images/products/.gitkeep
+
 # Logs
 logs
 *.log
