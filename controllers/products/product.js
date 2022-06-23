@@ -110,4 +110,45 @@ module.exports = {
       });
     }
   },
+
+  async handleEditProductById(req, res) {
+    try {
+      const { name, price, category, description } = req.body;
+
+      const product = await Products.findByPk(req.params.id);
+
+      if (!name || !price || !category || !description || !req.files['filenames']) {
+        return res.status(422).json({
+          message: 'Semua input harus diisi',
+        });
+      }
+
+      const filenames = req.files['filenames'].map((e) => e.filename);
+      const files = JSON.stringify(filenames);
+
+      if (filenames.length > 4) {
+        return res.status(422).json({
+          message: 'File maximal 4',
+        });
+      }
+
+      await product.update({
+        name,
+        price,
+        category,
+        description,
+        filenames: files,
+        createdBy: req.user.id,
+      });
+
+      return res.status(200).json({
+        message: 'Produk berhasil diedit',
+      });
+    } catch (err) {
+      return res.status(500).json({
+        name: err.name,
+        message: err.message,
+      });
+    }
+  },
 };

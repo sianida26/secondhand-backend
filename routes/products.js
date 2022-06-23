@@ -35,5 +35,6 @@ router.get('/user/:id', middlewares.authorization.authorize, products.getMyProdu
 router.get('/user/:user/:id', middlewares.authorization.authorize, products.getMyProductbyId);
 
 router.post('/', middlewares.authorization.authorize, cpUpload, products.handleCreateProduct);
+router.post('/:id', middlewares.authorization.authorize, cpUpload, products.handleEditProductById);
 
 module.exports = router;

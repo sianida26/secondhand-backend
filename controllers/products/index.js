@@ -1,4 +1,4 @@
-const { getProduct, getProductbyId, getMyProduct, getMyProductbyId, handleCreateProduct } = require('./product');
+const { getProduct, getProductbyId, getMyProduct, getMyProductbyId, handleCreateProduct, handleEditProductById } = require('./product');
 
 module.exports = {
   getProduct,
@@ -6,4 +6,5 @@ module.exports = {
   getMyProduct,
   getMyProductbyId,
   handleCreateProduct,
+  handleEditProductById,
 };
