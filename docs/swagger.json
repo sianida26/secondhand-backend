@@ -83,7 +83,7 @@
         "summary": "Create Product",
         "description": "Add new product to Database",
         "operationId": "createProduct",
-        "consumes": ["application/x-www-form-urlencoded"],
+        "consumes": ["multipart/form-data"],
         "produces": ["application/json"],
         "security": [
           {
@@ -105,6 +105,75 @@
           }
         },
         "parameters": [
+          {
+            "name": "name",
+            "in": "formData",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "price",
+            "in": "formData",
+            "required": true,
+            "type": "integer",
+            "format": "int32"
+          },
+          {
+            "name": "category",
+            "in": "formData",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "description",
+            "in": "formData",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "filenames",
+            "in": "formData",
+            "required": true,
+            "type": "file"
+          }
+        ],
+        "tags": ["Products"]
+      }
+    },
+    "/products/{id}": {
+      "put": {
+        "summary": "Edit Product By Id",
+        "description": "Edit product from Database",
+        "operationId": "editProductById",
+        "consumes": ["multipart/form-data"],
+        "produces": ["application/json"],
+        "security": [
+          {
+            "BearerTokenAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/coreCreateProductResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "type": "integer",
+            "format": "int64"
+          },
           {
             "name": "name",
             "in": "formData",
