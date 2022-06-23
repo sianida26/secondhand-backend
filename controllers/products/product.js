@@ -82,6 +82,7 @@ module.exports = {
         });
       }
 
+      // get req.files filename property
       const filenames = req.files['filenames'].map((e) => e.filename);
       const files = JSON.stringify(filenames);
 
@@ -123,6 +124,7 @@ module.exports = {
         });
       }
 
+      // get req.files filename property
       const filenames = req.files['filenames'].map((e) => e.filename);
       const files = JSON.stringify(filenames);
 
