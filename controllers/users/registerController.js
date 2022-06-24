@@ -16,7 +16,8 @@ module.exports = {
       const token = jwt.sign({ id: createUser.id, name: name, email: email }, JWT_KEY);
       res.status(201).json({
         name: createUser.name,
-        token: token
+        token: token,
+        profilePhoto: `https://avatars.dicebear.com/api/bottts/${createUser.id}.svg`
       })
     }).catch((err) => {
       res.status(422).json({

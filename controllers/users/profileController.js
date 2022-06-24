@@ -1,3 +1,5 @@
+const jwt = require('jsonwebtoken');
+const JWT_KEY = process.env.JWT_KEY || "Rahasia";
 const { Users } = require('../../models');
 
 module.exports = {
@@ -26,12 +28,11 @@ module.exports = {
   async editUserId(req, res) {
     const token = req.headers.authorization.split("Bearer ")[1];
     const tokenPayload = jwt.verify(token, JWT_KEY);
-    const { name, city, address, phone } = req.body;
+    let { name, city, address, phone } = req.body;
 
     //Validasi input user
     if (!(name && city && address && phone)) {
       return res.status(400).json({
-        status: "Failed",
         message: "Terdapat data yang tidak sesuai.",
         errors: {
           name: name ? undefined : "Nama harus diisi!",
@@ -42,12 +43,35 @@ module.exports = {
       });
     }
 
-    if (phone.length < 9) {
+    if (phone.length < 10) {
       return res.status(400).json({
-        status: "Failed",
         message: "Terdapat data yang tidak sesuai.",
-        errors: "No. Handphone minimal 9 karakter"
+        errors: {
+          phone: "No. Handphone minimal 10 karakter"
+        }
       });
+    }
+
+    const filter = /^\+?[0-9]{10,14}$/;
+    if(phone.search(filter) == -1) {
+      return res.status(400).json({
+        message: "Terdapat data yang tidak sesuai.",
+        errors: {
+          phone: "Format No. Handphone salah"
+        }
+      });
+    }
+
+    if (phone.startsWith('0')) {
+      phone = `62${phone.slice(1)}`;
+    }
+
+    if (phone.startsWith('62')) {
+      phone = `+${phone}`;
+    }
+
+    if (!phone.startsWith('+62')) {
+      phone = `+62${phone}`;
     }
 
     const userInfo = await Users.findByPk(tokenPayload.id);
@@ -62,12 +86,10 @@ module.exports = {
       where: { id: tokenPayload.id }
     }).then(() => {
       res.status(201).json({
-        status: "Success",
         message: `User with id ${tokenPayload.id} has been updated!`
       })
     }).catch((err) => {
       res.status(400).json({
-        status: "Failed",
         message: "Terdapat data yang tidak sesuai.",
         error: err.message
       })

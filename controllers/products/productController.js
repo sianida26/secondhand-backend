@@ -35,7 +35,7 @@ module.exports = {
       });
 
     } catch (err) {
-      res.status(400).json({
+      res.status(404).json({
         message: `Product with id ${req.params.id} not found`,
         errors: err.message
       });
