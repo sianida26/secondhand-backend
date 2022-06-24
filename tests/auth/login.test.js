@@ -6,8 +6,8 @@ const userModel = Users;
 
 describe('POST /users/login', () => {
   it('should response with 201 as status code and return access token', async () => {
-    const email = 'user1@mail.com';
-    const password = 'user123';
+    const email = 'nana@gmail.com';
+    const password = '12345';
     const user = await userModel.findOne({ where: { email } });
 
     return request(app)
