@@ -106,6 +106,151 @@
         },
         "tags": ["Auth"]
       }
+    },
+    "/products/history/{id}": {
+      "get": {
+        "summary": "Bid History By Id",
+        "description": "Retrieve bid history",
+        "operationId": "getBidHistoryById",
+        "security": [{ "BearerTokenAuth": [] }],
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/coreGetBidHistoryByIdResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "tags": ["Bids"]
+      }
+    },
+    "/products/my-products": {
+      "get": {
+        "summary": "List My Products",
+        "description": "Retrieve list of my products",
+        "operationId": "listMyProducts",
+        "security": [{ "BearerTokenAuth": [] }],
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/coreListMyProductsResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "tags": ["Products"]
+      }
+    },
+    "/products/detail/{id}": {
+      "get": {
+        "summary": "Get Product by Id",
+        "description": "Retrieve product by Id",
+        "operationId": "getProductById",
+        "security": [{ "BearerTokenAuth": [] }],
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/coreGetProductByIdResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "tags": ["Products"]
+      }
+    },
+    "/users/lengkapi-profil": {
+      "post": {
+        "summary": "Lengkapi Profil",
+        "description": "Fill User Profile",
+        "operationId": "fillProfile",
+        "security": [{ "BearerTokenAuth": [] }],
+        "responses": {
+          "201": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/coreFillProfileResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "consumes": "multipart/form-data",
+        "parameters": [
+          {
+            "name": "name",
+            "in": "formData",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "city",
+            "in": "formData",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "address",
+            "in": "formData",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "phone",
+            "in": "formData",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "file",
+            "in": "formData",
+            "required": false,
+            "type": "file"
+          }
+        ],
+        "tags": ["Users"]
+      }
     }
   },
   "definitions": {
@@ -113,10 +258,12 @@
       "type": "object",
       "properties": {
         "email": {
-          "type": "string"
+          "type": "string",
+          "example": "nana@gmail.com"
         },
         "password": {
-          "type": "string"
+          "type": "string",
+          "example": "nana1234"
         }
       }
     },
@@ -135,13 +282,16 @@
       "type": "object",
       "properties": {
         "email": {
-          "type": "string"
+          "type": "string",
+          "example": "nana@gmail.com"
         },
         "password": {
-          "type": "string"
+          "type": "string",
+          "example": "12345"
         },
         "name": {
-          "type": "string"
+          "type": "string",
+          "example": "nana"
         }
       }
     },
@@ -153,6 +303,51 @@
         },
         "token": {
           "type": "string"
+        }
+      }
+    },
+    "coreGetBidHistoryByIdResponse": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "buyerName": {
+          "type": "string"
+        },
+        "buyerCity": {
+          "type": "string"
+        },
+        "buyerPhone": {
+          "type": "string"
+        },
+        "productName": {
+          "type": "string"
+        },
+        "productImage": {
+          "type": "string"
+        },
+        "productPrice": {
+          "type": "integer"
+        },
+        "bidPrice": {
+          "type": "integer"
+        },
+        "bidAt": {
+          "type": "string"
+        },
+        "acceptedAt": {
+          "type": "string"
+        },
+        "declinedAt": {
+          "type": "string"
+        },
+        "soldAt": {
+          "type": "string"
+        },
+        "isAcceptable": {
+          "type": "boolean"
         }
       }
     },
@@ -176,6 +371,49 @@
           "items": {
             "$ref": "#/definitions/coreTerjual"
           }
+        }
+      }
+    },
+    "coreGetProductByIdResponse": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "productName": {
+          "type": "string"
+        },
+        "images": {
+          "type": "array"
+        },
+        "category": {
+          "type": "string"
+        },
+        "seller": {
+          "type": "object",
+          "properties": {
+            "name": {
+              "type": "string"
+            },
+            "city": {
+              "type": "string"
+            }
+          }
+        },
+        "description": {
+          "type": "string"
+        }
+      }
+    },
+    "coreFillProfileResponse": {
+      "type": "object",
+      "properties": {
+        "status": {
+          "type": "string"
+        },
+        "message": {
+          "type": "string"
         }
       }
     },
