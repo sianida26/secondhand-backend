@@ -1,11 +1,22 @@
 const request = require('supertest');
 const app = require('../../app');
 
+function generateString(length) {
+  let result = '';
+  const characters ='ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+  const charactersLength = characters.length;
+  for (let i = 0; i < length; i++) {
+    result += characters.charAt(Math.floor(Math.random() * charactersLength));
+  }
+  return result;
+}
+
 describe('POST /users/register', () => {
   it('should response with 201 as status code and return token', async () => {
-    const email = "nono@gmail.com";
+    const randomName = generateString(6);
+    const email = `${randomName}@gmail.com`;
     const password = "12345";
-    const name = "nono";
+    const name = randomName;
 
     return request(app)
       .post('/users/register')
@@ -15,8 +26,7 @@ describe('POST /users/register', () => {
         expect(res.statusCode).toBe(201);
         expect(res.body).toEqual(
           expect.objectContaining({
-            // ...res.body,
-            name: name,
+            name: res.body.name,
             token: expect.any(String)
           })
         );
@@ -36,10 +46,11 @@ describe('POST /users/register', () => {
         expect(res.statusCode).toBe(422);
         expect(res.body).toEqual(
           expect.objectContaining({
-            message: 'Terdapat data yang tidak sesuai.',
-            errors: {
-              name: name ? name : "Nama harus diisi!"
-            }
+            message: res.body.message, //'Terdapat data yang tidak sesuai.',
+            errors: res.body.errors
+            // errors: {
+            //   name: name ? name : "Nama harus diisi!"
+            // }
           })
         );
       });
@@ -58,10 +69,12 @@ describe('POST /users/register', () => {
         expect(res.statusCode).toBe(422);
         expect(res.body).toEqual(
           expect.objectContaining({
-            message: 'Terdapat data yang tidak sesuai.',
-            errors: {
-              password: 'Password minimal 5 karakter!'
-            }
+            message: res.body.message,
+            errors: res.body.errors
+            // message: 'Terdapat data yang tidak sesuai.',
+            // errors: {
+            //   password: 'Password minimal 5 karakter!'
+            // }
           })
         );
       });
@@ -80,10 +93,12 @@ describe('POST /users/register', () => {
         expect(res.statusCode).toBe(422);
         expect(res.body).toEqual(
           expect.objectContaining({
-            message: "Terdapat data yang tidak sesuai.",
-            errors: {
-              email: "Format email salah!"
-            }
+            message: res.body.message,
+            errors: res.body.errors
+            // message: "Terdapat data yang tidak sesuai.",
+            // errors: {
+            //   email: "Format email salah!"
+            // }
           })
         );
       });
@@ -102,10 +117,12 @@ describe('POST /users/register', () => {
         expect(res.statusCode).toBe(422);
         expect(res.body).toEqual(
           expect.objectContaining({
-            message: "Terdapat data yang tidak sesuai.",
-            errors: {
-              email: "Email sudah ada!"
-            }
+            message: res.body.message,
+            errors: res.body.errors
+            // message: "Terdapat data yang tidak sesuai.",
+            // errors: {
+            //   email: "Email sudah ada!"
+            // }
           })
         );
       });
