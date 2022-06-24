@@ -1,17 +1,25 @@
-var express = require('express');
-var router = express.Router();
-const middlewares = require('../middlewares');
+const express = require('express');
+const multer = require('multer');
 
 const users = require('../controllers/users');
-// const products = require('../controllers/products');
+const middlewares = require('../middlewares');
 
-/* GET users listing. */
-router.get('/', function (req, res, next) {
-  res.send('respond with a resource');
-});
+const router = express.Router();
+
+const storage = multer.diskStorage({
+  destination: (req, file, cb) => cb(null, './images/profiles'),
+  filename: (req, file, cb) => {
+    const fileName = `${Date.now()}${Math.floor(Math.random()*1E6)}.${file.originalname.split('.').pop()}`; //random filename
+    cb(null, fileName)
+  }
+})
+
+// multer configuration for file upload
+const upload = multer({ storage: storage })
 
 router.post('/login', users.loginController.handleLogin);
-router.post('/register', middlewares.registerRules.checkCondition, users.register.register);
+router.post('/lengkapi-profil',[middlewares.authorization.authorize, upload.single('file') ], users.profile.editUserId);
+router.post('/register', middlewares.registerRules.checkCondition, users.register.handleRegister);
 router.get('/whoami', middlewares.authorization.authorize, users.loginController.handleGetUser);
 
 router.get('/data/:id', middlewares.authorization.authorize, users.profile.getUserId);
