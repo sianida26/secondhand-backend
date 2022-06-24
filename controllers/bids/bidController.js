@@ -27,6 +27,7 @@ module.exports = {
         productName: bidHistory.products.name,
         productImage: JSON.parse(bidHistory.products.filenames).map(image => `https://secondhand-backend-kita.herokuapp.com/images/products/${image}`)[0],
         productPrice: bidHistory.products.price,
+        bidPrice: bidHistory.bidPrice,
         bidAt: bidHistory.createdAt,
         acceptedAt: bidHistory.acceptedAt,
         declinedAt: bidHistory.declinedAt,
