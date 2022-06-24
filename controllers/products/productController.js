@@ -24,7 +24,7 @@ module.exports = {
       const productId = await Products.findOne({ where: { id: req.params.id }, include: ['users'] });
       res.status(200).json({
         id: productId.id,
-        productName: productId.name,
+        name: productId.name,
         images: productId.filenames ? JSON.parse(productId.filenames).map(image => `https://secondhand-backend-kita.herokuapp.com/images/products/${image}`) : [],
         category: productId.category,
         description: productId.description,
@@ -63,13 +63,13 @@ module.exports = {
 
       myProducts.rows.sort((a, b) => new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime());
       myProducts.rows.map((product) => {
-        let images = product.filenames ? JSON.parse(product.filenames).map(image => `https://secondhand-backend-kita.herokuapp.com/images/products/${image}`) : [];
+        let images = product.filenames ? JSON.parse(product.filenames).map(image => `https://secondhand-backend-kita.herokuapp.com/images/products/${image}`)[0] : "";
 
         products.push({
           id: product.id,
-          productName: product.name,
+          name: product.name,
           price: product.price,
-          images: images
+          image: images
         });
 
         if (product.bids != '') {
@@ -77,9 +77,9 @@ module.exports = {
             if (bid.bidPrice && !bid.soldAt) {
               interestedProducts.push({
                 id: bid.id,
-                productName: product.name,
+                name: product.name,
                 price: product.price,
-                images: images,
+                image: images,
                 buyerName: bid.users.name,
                 bidPrice: bid.bidPrice
               });
@@ -87,10 +87,10 @@ module.exports = {
   
             if (bid.soldAt) {
               soldProducts.push({
-                id: product.id,
-                productName: product.name,
+                id: bid.id,
+                name: product.name,
                 price: product.price,
-                images: images,
+                image: images,
                 buyerName: bid.users.name,
                 bidPrice: bid.bidPrice,
                 soldAt: bid.soldAt
