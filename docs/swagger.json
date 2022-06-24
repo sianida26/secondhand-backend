@@ -11,10 +11,23 @@
   "tags": [
     {
       "name": "Auth"
+    },
+    {
+      "name": "Products"
+    },
+    {
+      "name": "Bids"
+    },
+    {
+      "name": "Users"
     }
   ],
-  "consumes": ["application/json"],
-  "produces": ["application/json"],
+  "consumes": [
+    "application/json"
+  ],
+  "produces": [
+    "application/json"
+  ],
   "paths": {
     "/users/login": {
       "post": {
@@ -45,7 +58,9 @@
             }
           }
         ],
-        "tags": ["Auth"]
+        "tags": [
+          "Auth"
+        ]
       }
     },
     "/users/register": {
@@ -77,7 +92,9 @@
             }
           }
         ],
-        "tags": ["Auth"]
+        "tags": [
+          "Auth"
+        ]
       }
     },
     "/users/whoami": {
@@ -104,40 +121,9 @@
             }
           }
         },
-        "tags": ["Auth"]
-      }
-    },
-    "/products/history/{id}": {
-      "get": {
-        "summary": "Bid History By Id",
-        "description": "Retrieve bid history",
-        "operationId": "getBidHistoryById",
-        "security": [{ "BearerTokenAuth": [] }],
-        "responses": {
-          "200": {
-            "description": "A successful response.",
-            "schema": {
-              "$ref": "#/definitions/coreGetBidHistoryByIdResponse"
-            }
-          },
-          "default": {
-            "description": "An unexpected error response.",
-            "schema": {
-              "$ref": "#/definitions/rpcStatus"
-            }
-          }
-        },
-        "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
-        "tags": ["Bids"]
+        "tags": [
+          "Auth"
+        ]
       }
     },
     "/products/my-products": {
@@ -145,7 +131,11 @@
         "summary": "List My Products",
         "description": "Retrieve list of my products",
         "operationId": "listMyProducts",
-        "security": [{ "BearerTokenAuth": [] }],
+        "security": [
+          {
+            "BearerTokenAuth": []
+          }
+        ],
         "responses": {
           "200": {
             "description": "A successful response.",
@@ -160,7 +150,9 @@
             }
           }
         },
-        "tags": ["Products"]
+        "tags": [
+          "Products"
+        ]
       }
     },
     "/products/detail/{id}": {
@@ -168,7 +160,11 @@
         "summary": "Get Product by Id",
         "description": "Retrieve product by Id",
         "operationId": "getProductById",
-        "security": [{ "BearerTokenAuth": [] }],
+        "security": [
+          {
+            "BearerTokenAuth": []
+          }
+        ],
         "responses": {
           "200": {
             "description": "A successful response.",
@@ -188,12 +184,194 @@
             "name": "id",
             "in": "path",
             "required": true,
-            "schema": {
-              "type": "string"
-            }
+            "type": "integer",
+            "format": "int64"
           }
         ],
-        "tags": ["Products"]
+        "tags": [
+          "Products"
+        ]
+      }
+    },
+    "/products": {
+      "post": {
+        "summary": "Create Product",
+        "description": "Add new product to Database",
+        "operationId": "createProduct",
+        "consumes": [
+          "multipart/form-data"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "security": [
+          {
+            "BearerTokenAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/coreCreateProductResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "name",
+            "in": "formData",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "price",
+            "in": "formData",
+            "required": true,
+            "type": "integer",
+            "format": "int32"
+          },
+          {
+            "name": "category",
+            "in": "formData",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "description",
+            "in": "formData",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "filenames",
+            "in": "formData",
+            "required": true,
+            "type": "file"
+          }
+        ],
+        "tags": [
+          "Products"
+        ]
+      }
+    },
+    "/products/{id}": {
+      "put": {
+        "summary": "Edit Product By Id",
+        "description": "Edit product from Database",
+        "operationId": "editProductById",
+        "consumes": [
+          "multipart/form-data"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "security": [
+          {
+            "BearerTokenAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/coreCreateProductResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "type": "integer",
+            "format": "int64"
+          },
+          {
+            "name": "name",
+            "in": "formData",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "price",
+            "in": "formData",
+            "required": true,
+            "type": "integer",
+            "format": "int32"
+          },
+          {
+            "name": "category",
+            "in": "formData",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "description",
+            "in": "formData",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "filenames",
+            "in": "formData",
+            "required": true,
+            "type": "file"
+          }
+        ],
+        "tags": [
+          "Products"
+        ]
+      }
+    },
+    "/products/history/{id}": {
+      "get": {
+        "summary": "Bid History By Id",
+        "description": "Retrieve bid history",
+        "operationId": "getBidHistoryById",
+        "security": [
+          {
+            "BearerTokenAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/coreGetBidHistoryByIdResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "type": "integer",
+            "format": "int64"
+          }
+        ],
+        "tags": [
+          "Bids"
+        ]
       }
     },
     "/users/lengkapi-profil": {
@@ -201,7 +379,11 @@
         "summary": "Lengkapi Profil",
         "description": "Fill User Profile",
         "operationId": "fillProfile",
-        "security": [{ "BearerTokenAuth": [] }],
+        "security": [
+          {
+            "BearerTokenAuth": []
+          }
+        ],
         "responses": {
           "201": {
             "description": "A successful response.",
@@ -216,7 +398,9 @@
             }
           }
         },
-        "consumes": "multipart/form-data",
+        "consumes": [
+          "multipart/form-data"
+        ],
         "parameters": [
           {
             "name": "name",
@@ -249,7 +433,9 @@
             "type": "file"
           }
         ],
-        "tags": ["Users"]
+        "tags": [
+          "Users"
+        ]
       }
     }
   },
@@ -258,12 +444,10 @@
       "type": "object",
       "properties": {
         "email": {
-          "type": "string",
-          "example": "nana@gmail.com"
+          "type": "string"
         },
         "password": {
-          "type": "string",
-          "example": "nana1234"
+          "type": "string"
         }
       }
     },
@@ -274,6 +458,17 @@
           "type": "string"
         },
         "accessToken": {
+          "type": "string"
+        }
+      }
+    },
+    "coreWhoAmIResponse": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "email": {
           "type": "string"
         }
       }
@@ -302,6 +497,14 @@
           "type": "string"
         },
         "token": {
+          "type": "string"
+        }
+      }
+    },
+    "coreCreateProductResponse": {
+      "type": "object",
+      "properties": {
+        "message": {
           "type": "string"
         }
       }
@@ -385,7 +588,7 @@
           "type": "string"
         },
         "images": {
-          "type": "array"
+          "type": "string"
         },
         "category": {
           "type": "string"

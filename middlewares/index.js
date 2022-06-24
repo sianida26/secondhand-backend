@@ -3,5 +3,5 @@ const registerRules = require('./registerRules');
 
 module.exports = {
   authorization,
-  registerRules
+  registerRules,
 };
