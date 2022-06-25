@@ -86,7 +86,8 @@ module.exports = {
       where: { id: tokenPayload.id }
     }).then(() => {
       res.status(201).json({
-        message: `User with id ${tokenPayload.id} has been updated!`
+        message: "OK",
+        detail: `User with id ${tokenPayload.id} has been updated!`
       })
     }).catch((err) => {
       res.status(400).json({
