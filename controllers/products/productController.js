@@ -1,6 +1,7 @@
 const jwt = require('jsonwebtoken');
 const JWT_KEY = process.env.JWT_KEY || 'Rahasia';
 const { Products, Bids } = require('../../models');
+const { Op } = require('sequelize');
 
 module.exports = {
   async handleGetAllProducts(req, res) {
@@ -128,4 +129,17 @@ module.exports = {
 	await product.destroy();
 	return res.status(200).json({ message: 'Produk berhasil dihapus' })
   },
+
+  async getAvailableProducts(req, res){
+	//TODO: Filter items on database level for better performance
+	const products = await Products.findAll({ include: [ 'bids' ] })
+	
+	return res.json(products.filter(product => product.isBiddable() && product.createdBy !== req.user?.id)
+		.map(product => ({
+			id: product.id,
+			category: product.category,
+			image: JSON.parse(product.filenames),
+			price: product.price,
+		})))
+  }
 };

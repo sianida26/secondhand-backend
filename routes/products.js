@@ -36,6 +36,7 @@ router.get('/user/:id', middlewares.authorization.authorize, products.getMyProdu
 router.get('/user/:user/:id', middlewares.authorization.authorize, products.getMyProductbyId);
 
 router.post('/', middlewares.authorization.authorize, cpUpload, products.handleCreateProduct);
+router.get('/available', middlewares.authorization.optionalAuth, products.product.getAvailableProducts);
 router.put('/:id', middlewares.authorization.authorize, cpUpload, products.handleEditProductById);
 router.get('/all', middlewares.authorization.authorize, products.product.handleGetAllProducts);
 router.get('/detail/:id', middlewares.authorization.authorize, products.product.handleGetProductbyId);
