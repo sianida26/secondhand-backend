@@ -41,6 +41,7 @@ router.get('/all', middlewares.authorization.authorize, products.product.handleG
 router.get('/detail/:id', middlewares.authorization.authorize, products.product.handleGetProductbyId);
 router.get('/history/:id', middlewares.authorization.authorize, bids.bid.handleBidHistory);
 router.get('/my-products', middlewares.authorization.authorize, products.product.handleListMyProducts);
+router.delete('/delete-product/:id', middlewares.authorization.authorize, products.product.deleteProduct);
 
 // router.post('/', products.product.handleCreateProduct);
 
