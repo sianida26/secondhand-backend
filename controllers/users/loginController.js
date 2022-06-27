@@ -35,7 +35,7 @@ const handleLogin = async (req, res) => {
     res.status(200).json({
       name: user.name,
       profilePhoto,
-      accessToken: accessToken,
+      token: accessToken,
     });
   } catch (err) {
     res.status(500).json({
