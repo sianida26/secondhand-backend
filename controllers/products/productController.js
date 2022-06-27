@@ -84,7 +84,8 @@ module.exports = {
 								category: product.category,
 								image: images,
 								buyerName: bid.users.name,
-								bidPrice: bid.bidPrice
+								bidPrice: bid.bidPrice,
+								bidTimestamp: bid.createdAt
 							});
 						}
 
@@ -97,7 +98,8 @@ module.exports = {
 								image: images,
 								buyerName: bid.users.name,
 								bidPrice: bid.bidPrice,
-								soldAt: bid.soldAt
+								bidTimestamp: bid.createdAt,
+								soldTimestamp: bid.soldAt
 							});
 						}
 					});
