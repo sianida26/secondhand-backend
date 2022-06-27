@@ -25,5 +25,18 @@ module.exports = {
         error: err.message
       });
     }
+  },
+
+  async optionalAuth(req, res, next){
+    const token = req.headers.authorization ? req.headers.authorization.split("Bearer ")[1] : false;
+
+    if (!token) {
+      return next();
+    }
+
+    const tokenPayLoad = jwt.verify(token, JWT_KEY);
+    req.user = await Users.findByPk(tokenPayLoad.id);
+
+    next();
   }
 };

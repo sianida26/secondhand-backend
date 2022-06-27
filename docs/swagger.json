@@ -155,6 +155,74 @@
         ]
       }
     },
+    "/products/available": {
+      "get": {
+        "summary": "Get Available Products",
+        "description": "Retrieve available products",
+        "operationId": "getAvailableProduct",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/coreGetAvailableProducts"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "tags": [
+          "Products"
+        ]
+      }
+    },
+    "/products/delete-product/{id}": {
+      "delete": {
+        "summary": "Deletes Product",
+        "description": "Deletes product of given id",
+        "operationId": "deleteProduct",
+        "security": [
+          {
+            "BearerTokenAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "A successful response."
+          },
+          "401": {
+            "description": "Unauthenticated"
+          },
+          "403": {
+            "description": "Unauthorized to run such action."
+          },
+          "404": {
+            "description": "Product id not found"
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "type": "integer",
+            "format": "int64"
+          }
+        ],
+        "tags": [
+          "Products"
+        ]
+      }
+    },
     "/products/detail/{id}": {
       "get": {
         "summary": "Get Product by Id",
@@ -609,6 +677,12 @@
         }
       }
     },
+    "coreGetAvailableProducts": {
+      "type": "array",
+      "items": {
+        "$ref": "#/definitions/coreAvailableProduct"
+      }
+    },
     "coreFillProfileResponse": {
       "type": "object",
       "properties": {
@@ -694,6 +768,24 @@
           "type": "string",
           "format": "date-time"
         }
+      }
+    },
+    "coreAvailableProduct": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "category": {
+          "type": "string"
+        },
+        "price": {
+          "type": "integer"
+        },
+        "image": {
+          "type": "string"
+        }            
       }
     },
     "protobufAny": {

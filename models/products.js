@@ -2,6 +2,7 @@
 const {
   Model
 } = require('sequelize');
+const { bid } = require('../controllers/bids');
 const { Users } = require('./index');
 module.exports = (sequelize, DataTypes) => {
   class Products extends Model {
@@ -21,12 +22,17 @@ module.exports = (sequelize, DataTypes) => {
         as: 'bids'
       });
     }
+
+    isBiddable(){
+      //TODO: Filter items on database level for better performance
+      return this.bids.every(bid => (!bid.soldAt && (!bid.acceptedAt || bid.acceptedAt && bid.declinedAt)));
+    }
   }
   Products.init({
     name: DataTypes.STRING,
     price: DataTypes.INTEGER,
     category: DataTypes.STRING,
-    description: DataTypes.STRING,
+    description: DataTypes.TEXT,
     filenames: DataTypes.TEXT,
     createdBy: {
       type: DataTypes.INTEGER,
