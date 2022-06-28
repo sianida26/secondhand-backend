@@ -2,7 +2,6 @@ var express = require('express');
 var router = express.Router();
 const multer = require('multer');
 
-
 const bids = require('../controllers/bids');
 const products = require('../controllers/products');
 const middlewares = require('../middlewares');
@@ -39,7 +38,8 @@ router.post('/', middlewares.authorization.authorize, cpUpload, products.handleC
 router.get('/available', middlewares.authorization.optionalAuth, products.product.getAvailableProducts);
 router.put('/:id', middlewares.authorization.authorize, cpUpload, products.handleEditProductById);
 router.get('/all', middlewares.authorization.authorize, products.product.handleGetAllProducts);
-router.get('/detail/:id', middlewares.authorization.authorize, products.product.handleGetProductbyId);
+router.get('/detail-buyer/:id', middlewares.authorization.optionalAuth, products.product.handleGetProductById);
+router.get('/detail/:id', middlewares.authorization.authorize, products.product.handleGetProductById);
 router.get('/history/:id', middlewares.authorization.authorize, bids.bid.handleBidHistory);
 router.get('/my-products', middlewares.authorization.authorize, products.product.handleListMyProducts);
 router.delete('/delete-product/:id', middlewares.authorization.authorize, products.product.deleteProduct);
