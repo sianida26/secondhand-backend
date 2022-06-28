@@ -143,6 +143,12 @@
               "$ref": "#/definitions/coreListMyProductsResponse"
             }
           },
+          "401": {
+            "description": "Unauthenticated"
+          },
+          "403": {
+            "description": "Unauthorized to run such action."
+          },
           "default": {
             "description": "An unexpected error response.",
             "schema": {
@@ -226,7 +232,7 @@
     "/products/detail/{id}": {
       "get": {
         "summary": "Get Product by Id",
-        "description": "Retrieve product by Id",
+        "description": "Retrieve product By Id",
         "operationId": "getProductById",
         "security": [
           {
@@ -239,6 +245,9 @@
             "schema": {
               "$ref": "#/definitions/coreGetProductByIdResponse"
             }
+          },
+          "404": {
+            "description": "Product id not found"
           },
           "default": {
             "description": "An unexpected error response.",
@@ -442,6 +451,44 @@
         ]
       }
     },
+    "/notifications": {
+      "get": {
+        "summary": "Get Notifications",
+        "description": "Retrieve List Notifications",
+        "operationId": "getNotifications",
+        "security": [
+          {
+            "BearerTokenAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/coreGetNotifications"
+              }
+            } 
+          },
+          "401": {
+            "description": "Unauthenticated."
+          },
+          "403": {
+            "description": "Unauthorized to run such action."
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "tags": [
+          "Bids"
+        ]
+      }
+    },
     "/users/lengkapi-profil": {
       "post": {
         "summary": "Lengkapi Profil",
@@ -458,6 +505,12 @@
             "schema": {
               "$ref": "#/definitions/coreFillProfileResponse"
             }
+          },
+          "401": {
+            "description": "Unauthenticated."
+          },
+          "403": {
+            "description": "Unauthorized to run such action."
           },
           "default": {
             "description": "An unexpected error response.",
@@ -619,6 +672,32 @@
         },
         "isAcceptable": {
           "type": "boolean"
+        }
+      }
+    },
+    "coreGetNotifications": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "integer"
+        },
+        "productName": {
+          "type": "string"
+        },
+        "price": {
+          "type": "integer"
+        },
+        "image": {
+          "type": "string"
+        },
+        "type": {
+          "type": "string"
+        },
+        "bidPrice": {
+          "type": "integer"
+        },
+        "time": {
+          "type": "string"
         }
       }
     },
