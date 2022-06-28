@@ -1,5 +1,3 @@
-const jwt = require('jsonwebtoken');
-const JWT_KEY = process.env.JWT_KEY || "Rahasia";
 const { Users } = require('../../models');
 
 module.exports = {
@@ -26,8 +24,7 @@ module.exports = {
   },
 
   async editUserId(req, res) {
-    const token = req.headers.authorization.split("Bearer ")[1];
-    const tokenPayload = jwt.verify(token, JWT_KEY);
+    const userId = req.user;
     let { name, city, address, phone } = req.body;
 
     //Validasi input user
@@ -62,6 +59,7 @@ module.exports = {
       });
     }
 
+    
     if (phone.startsWith('0')) {
       phone = `62${phone.slice(1)}`;
     }
@@ -73,8 +71,14 @@ module.exports = {
     if (!phone.startsWith('+62')) {
       phone = `+62${phone}`;
     }
+    
+    const userInfo = await Users.findByPk(userId.id);
 
-    const userInfo = await Users.findByPk(tokenPayload.id);
+    if (userInfo.id !== req.user.id) {
+      return res.status(403).json({
+        message: 'Unauthorized!'
+      });
+    }
 
     await Users.update({
       name,
@@ -83,11 +87,11 @@ module.exports = {
       phone,
       image: req.file ? req.file.filename : userInfo.image
     }, {
-      where: { id: tokenPayload.id }
+      where: { id: userId.id }
     }).then(() => {
       res.status(201).json({
         message: "OK",
-        detail: `User with id ${tokenPayload.id} has been updated!`
+        detail: `User with id ${userId.id} has been updated!`
       })
     }).catch((err) => {
       res.status(400).json({
