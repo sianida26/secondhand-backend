@@ -1,7 +1,5 @@
 'use strict';
-const {
-  Model
-} = require('sequelize');
+const { Model } = require('sequelize');
 const { Products, Users } = require('./index');
 module.exports = (sequelize, DataTypes) => {
   class Bids extends Model {
@@ -14,36 +12,39 @@ module.exports = (sequelize, DataTypes) => {
       // define association here
       Bids.belongsTo(models.Users, {
         foreignKey: 'buyerId',
-        as: 'users'
+        as: 'users',
       });
       Bids.belongsTo(models.Products, {
         foreignKey: 'productId',
-        as: 'products'
+        as: 'products',
       });
     }
   }
-  Bids.init({
-    buyerId: {
-      type: DataTypes.INTEGER,
-      references: {
-        model: Users,
-        key: 'id'
-      }
+  Bids.init(
+    {
+      buyerId: {
+        type: DataTypes.INTEGER,
+        references: {
+          model: Users,
+          key: 'id',
+        },
+      },
+      productId: {
+        type: DataTypes.INTEGER,
+        references: {
+          model: Products,
+          key: 'id',
+        },
+      },
+      bidPrice: DataTypes.INTEGER,
+      acceptedAt: DataTypes.DATE,
+      declinedAt: DataTypes.DATE,
+      soldAt: DataTypes.DATE,
     },
-    productId: {
-      type: DataTypes.INTEGER,
-      references: {
-        model: Products,
-        key: 'id'
-      }
-    },
-    bidPrice: DataTypes.INTEGER,
-    acceptedAt: DataTypes.DATE,
-    declinedAt: DataTypes.DATE,
-    soldAt: DataTypes.DATE
-  }, {
-    sequelize,
-    modelName: 'Bids',
-  });
+    {
+      sequelize,
+      modelName: 'Bids',
+    }
+  );
   return Bids;
 };

@@ -5,19 +5,19 @@ module.exports = {
     try {
       const bidHistory = await Bids.findOne({
         where: {
-          id: req.params.id
+          id: req.params.id,
         },
-        include: ['users', 'products']
+        include: ['users', 'products'],
       });
 
       const productsCheck = await Products.findOne({
         where: {
-          id: bidHistory.productId
+          id: bidHistory.productId,
         },
-        include: ['bids']
+        include: ['bids'],
       });
 
-      let productAcc = productsCheck.bids.find(bid => bid.acceptedAt);
+      let productAcc = productsCheck.bids.find((bid) => bid.acceptedAt);
 
       res.status(200).json({
         id: bidHistory.id,
@@ -25,22 +25,82 @@ module.exports = {
         buyerCity: bidHistory.users.city,
         buyerPhone: bidHistory.users.phone,
         productName: bidHistory.products.name,
-        productImage: JSON.parse(bidHistory.products.filenames).map(image => `https://secondhand-backend-kita.herokuapp.com/images/products/${image}`)[0],
+        productImage: JSON.parse(bidHistory.products.filenames).map((image) => `https://secondhand-backend-kita.herokuapp.com/images/products/${image}`)[0],
         productPrice: bidHistory.products.price,
         bidPrice: bidHistory.bidPrice,
         bidAt: bidHistory.createdAt,
         acceptedAt: bidHistory.acceptedAt,
         declinedAt: bidHistory.declinedAt,
         soldAt: bidHistory.soldAt,
-        isAcceptable: !productAcc
+        isAcceptable: !productAcc,
       });
-
     } catch (err) {
       res.status(404).json({
         message: `Product with id ${req.params.id} not found`,
-        errors: err.message
+        errors: err.message,
       });
     }
-  }
+  },
 
-}
+  async handleAcceptBids(req, res) {
+    try {
+      const bid = await Bids.findByPk(req.params.id);
+
+      if (!bid) {
+        return res.status(404).json({
+          message: `Bid tidak ditemukan`,
+        });
+      }
+
+      if (req.user.id !== bid.buyerId) {
+        return res.status(403).json({
+          message: 'Forbidden',
+        });
+      }
+
+      await bid.update({
+        acceptedAt: new Date(),
+      });
+
+      return res.status(200).json({
+        message: 'OK',
+      });
+    } catch (err) {
+      return res.status(500).json({
+        name: err.name,
+        message: err.message,
+      });
+    }
+  },
+
+  async handleRejectBids(req, res) {
+    try {
+      const bid = await Bids.findByPk(req.params.id);
+
+      if (!bid) {
+        return res.status(404).json({
+          message: `Bid tidak ditemukan`,
+        });
+      }
+
+      if (req.user.id !== bid.buyerId) {
+        return res.status(403).json({
+          message: 'Forbidden',
+        });
+      }
+
+      await bid.update({
+        declinedAt: new Date(),
+      });
+
+      return res.status(200).json({
+        message: 'OK',
+      });
+    } catch (err) {
+      return res.status(500).json({
+        name: err.name,
+        message: err.message,
+      });
+    }
+  },
+};
