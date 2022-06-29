@@ -27,9 +27,9 @@ module.exports = {
     const userId = req.user;
     let { name, city, address, phone } = req.body;
 
-    //Validasi input user
+    // Validasi input user
     if (!(name && city && address && phone)) {
-      return res.status(400).json({
+      return res.status(422).json({
         message: "Terdapat data yang tidak sesuai.",
         errors: {
           name: name ? undefined : "Nama harus diisi!",
@@ -41,7 +41,7 @@ module.exports = {
     }
 
     if (phone.length < 10) {
-      return res.status(400).json({
+      return res.status(422).json({
         message: "Terdapat data yang tidak sesuai.",
         errors: {
           phone: "No. Handphone minimal 10 karakter"
@@ -51,7 +51,7 @@ module.exports = {
 
     const filter = /^\+?[0-9]{10,14}$/;
     if(phone.search(filter) == -1) {
-      return res.status(400).json({
+      return res.status(422).json({
         message: "Terdapat data yang tidak sesuai.",
         errors: {
           phone: "Format No. Handphone salah"
@@ -59,7 +59,6 @@ module.exports = {
       });
     }
 
-    
     if (phone.startsWith('0')) {
       phone = `62${phone.slice(1)}`;
     }
@@ -71,14 +70,8 @@ module.exports = {
     if (!phone.startsWith('+62')) {
       phone = `+62${phone}`;
     }
-    
-    const userInfo = await Users.findByPk(userId.id);
 
-    if (userInfo.id !== req.user.id) {
-      return res.status(403).json({
-        message: 'Unauthorized!'
-      });
-    }
+    const userInfo = await Users.findByPk(userId.id);
 
     await Users.update({
       name,
