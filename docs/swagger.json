@@ -270,6 +270,43 @@
         ]
       }
     },
+    "/products/detail-buyer/{id}": {
+      "get": {
+        "summary": "Get Product by Id",
+        "description": "Retrieve product By Id",
+        "operationId": "getProductById",
+        "security": [],
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/coreGetProductByIdResponse"
+            }
+          },
+          "404": {
+            "description": "Product id not found"
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "type": "integer",
+            "format": "int64"
+          }
+        ],
+        "tags": [
+          "Products"
+        ]
+      }
+    },
     "/products": {
       "post": {
         "summary": "Create Product",
