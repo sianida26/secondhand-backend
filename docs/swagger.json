@@ -22,12 +22,8 @@
       "name": "Users"
     }
   ],
-  "consumes": [
-    "application/json"
-  ],
-  "produces": [
-    "application/json"
-  ],
+  "consumes": ["application/json"],
+  "produces": ["application/json"],
   "paths": {
     "/users/login": {
       "post": {
@@ -58,9 +54,7 @@
             }
           }
         ],
-        "tags": [
-          "Auth"
-        ]
+        "tags": ["Auth"]
       }
     },
     "/users/register": {
@@ -92,9 +86,7 @@
             }
           }
         ],
-        "tags": [
-          "Auth"
-        ]
+        "tags": ["Auth"]
       }
     },
     "/users/whoami": {
@@ -121,9 +113,7 @@
             }
           }
         },
-        "tags": [
-          "Auth"
-        ]
+        "tags": ["Auth"]
       }
     },
     "/products/my-products": {
@@ -150,9 +140,7 @@
             }
           }
         },
-        "tags": [
-          "Products"
-        ]
+        "tags": ["Products"]
       }
     },
     "/products/available": {
@@ -174,9 +162,7 @@
             }
           }
         },
-        "tags": [
-          "Products"
-        ]
+        "tags": ["Products"]
       }
     },
     "/products/delete-product/{id}": {
@@ -218,9 +204,7 @@
             "format": "int64"
           }
         ],
-        "tags": [
-          "Products"
-        ]
+        "tags": ["Products"]
       }
     },
     "/products/detail/{id}": {
@@ -256,9 +240,7 @@
             "format": "int64"
           }
         ],
-        "tags": [
-          "Products"
-        ]
+        "tags": ["Products"]
       }
     },
     "/products": {
@@ -266,12 +248,8 @@
         "summary": "Create Product",
         "description": "Add new product to Database",
         "operationId": "createProduct",
-        "consumes": [
-          "multipart/form-data"
-        ],
-        "produces": [
-          "application/json"
-        ],
+        "consumes": ["multipart/form-data"],
+        "produces": ["application/json"],
         "security": [
           {
             "BearerTokenAuth": []
@@ -324,9 +302,7 @@
             "type": "file"
           }
         ],
-        "tags": [
-          "Products"
-        ]
+        "tags": ["Products"]
       }
     },
     "/products/{id}": {
@@ -334,12 +310,8 @@
         "summary": "Edit Product By Id",
         "description": "Edit product from Database",
         "operationId": "editProductById",
-        "consumes": [
-          "multipart/form-data"
-        ],
-        "produces": [
-          "application/json"
-        ],
+        "consumes": ["multipart/form-data"],
+        "produces": ["application/json"],
         "security": [
           {
             "BearerTokenAuth": []
@@ -399,9 +371,7 @@
             "type": "file"
           }
         ],
-        "tags": [
-          "Products"
-        ]
+        "tags": ["Products"]
       }
     },
     "/products/history/{id}": {
@@ -437,9 +407,133 @@
             "format": "int64"
           }
         ],
-        "tags": [
-          "Bids"
-        ]
+        "tags": ["Bids"]
+      }
+    },
+    "/bids/accept/{id}": {
+      "post": {
+        "summary": "Accept Bid",
+        "description": "Menerima Tawaran dari calon Buyer",
+        "operationId": "handleAcceptBids",
+        "security": [
+          {
+            "BearerTokenAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "401": {
+            "description": "Unauthenticated"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "404": {
+            "description": "Bid tidak ditemukan"
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "type": "integer",
+            "format": "int64"
+          }
+        ],
+        "tags": ["Bids"]
+      }
+    },
+    "/bids/reject/{id}": {
+      "post": {
+        "summary": "Reject Bid",
+        "description": "Menolak Tawaran dari calon Buyer",
+        "operationId": "handleRejectBids",
+        "security": [
+          {
+            "BearerTokenAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "401": {
+            "description": "Unauthenticated"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "404": {
+            "description": "Bid tidak ditemukan"
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "type": "integer",
+            "format": "int64"
+          }
+        ],
+        "tags": ["Bids"]
+      }
+    },
+    "/bids/finish/{id}": {
+      "post": {
+        "summary": "Finish Bid",
+        "description": "Menyelesaikan penjualan pada tawaran yang terpilih",
+        "operationId": "handleFinishSale",
+        "security": [
+          {
+            "BearerTokenAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "401": {
+            "description": "Unauthenticated"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "404": {
+            "description": "Bid tidak ditemukan"
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "type": "integer",
+            "format": "int64"
+          }
+        ],
+        "tags": ["Bids"]
       }
     },
     "/users/lengkapi-profil": {
@@ -466,9 +560,7 @@
             }
           }
         },
-        "consumes": [
-          "multipart/form-data"
-        ],
+        "consumes": ["multipart/form-data"],
         "parameters": [
           {
             "name": "name",
@@ -501,9 +593,7 @@
             "type": "file"
           }
         ],
-        "tags": [
-          "Users"
-        ]
+        "tags": ["Users"]
       }
     }
   },
@@ -512,10 +602,12 @@
       "type": "object",
       "properties": {
         "email": {
-          "type": "string"
+          "type": "string",
+          "example": "nana@gmail.com"
         },
         "password": {
-          "type": "string"
+          "type": "string",
+          "example": "12345"
         }
       }
     },
@@ -525,7 +617,10 @@
         "name": {
           "type": "string"
         },
-        "accessToken": {
+        "city": {
+          "type": "string"
+        },
+        "token": {
           "type": "string"
         }
       }
@@ -562,6 +657,9 @@
       "type": "object",
       "properties": {
         "name": {
+          "type": "string"
+        },
+        "city": {
           "type": "string"
         },
         "token": {
@@ -785,7 +883,7 @@
         },
         "image": {
           "type": "string"
-        }            
+        }
       }
     },
     "protobufAny": {
