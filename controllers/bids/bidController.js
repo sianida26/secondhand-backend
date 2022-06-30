@@ -58,6 +58,18 @@ module.exports = {
         });
       }
 
+      if (bid.soldAt !== null) {
+        return res.status(403).json({
+          message: 'Forbidden',
+        });
+      }
+
+      if (bid.declinedAt !== null) {
+        return res.status(403).json({
+          message: 'Forbidden',
+        });
+      }
+
       await bid.update({
         acceptedAt: new Date(),
       });
@@ -89,8 +101,51 @@ module.exports = {
         });
       }
 
+      if (bid.soldAt !== null) {
+        return res.status(403).json({
+          message: 'Forbidden',
+        });
+      }
+
       await bid.update({
         declinedAt: new Date(),
+      });
+
+      return res.status(200).json({
+        message: 'OK',
+      });
+    } catch (err) {
+      return res.status(500).json({
+        name: err.name,
+        message: err.message,
+      });
+    }
+  },
+
+  async handleFinishSale(req, res) {
+    try {
+      const bid = await Bids.findByPk(req.params.id);
+
+      if (!bid) {
+        return res.status(404).json({
+          message: `Bid tidak ditemukan`,
+        });
+      }
+
+      if (req.user.id !== bid.buyerId) {
+        return res.status(403).json({
+          message: 'Forbidden',
+        });
+      }
+
+      if (bid.declinedAt !== null) {
+        return res.status(403).json({
+          message: 'Forbidden',
+        });
+      }
+
+      await bid.update({
+        soldAt: new Date(),
       });
 
       return res.status(200).json({
