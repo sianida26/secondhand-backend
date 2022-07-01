@@ -45,6 +45,11 @@ module.exports = {
   async handleAcceptBids(req, res) {
     try {
       const bid = await Bids.findByPk(req.params.id);
+      const product = await Products.findOne({
+        where: {
+          id: bid.productId,
+        },
+      });
 
       if (!bid) {
         return res.status(404).json({
@@ -52,30 +57,26 @@ module.exports = {
         });
       }
 
-      if (req.user.id !== bid.buyerId) {
+      if (req.user.id !== product.createdBy) {
         return res.status(403).json({
           message: 'Forbidden',
         });
       }
 
-      if (bid.soldAt !== null) {
+      if (bid.declinedAt !== null || bid.soldAt !== null) {
         return res.status(403).json({
           message: 'Forbidden',
         });
       }
 
-      if (bid.declinedAt !== null) {
-        return res.status(403).json({
-          message: 'Forbidden',
-        });
-      }
-
-      await bid.update({
-        acceptedAt: new Date(),
-      });
+      // await bid.update({
+      //   acceptedAt: new Date(),
+      // });
 
       return res.status(200).json({
         message: 'OK',
+        sellerYgLoginNow: req.user.id,
+        product,
       });
     } catch (err) {
       return res.status(500).json({
@@ -88,6 +89,11 @@ module.exports = {
   async handleRejectBids(req, res) {
     try {
       const bid = await Bids.findByPk(req.params.id);
+      const product = await Products.findOne({
+        where: {
+          id: bid.productId,
+        },
+      });
 
       if (!bid) {
         return res.status(404).json({
@@ -95,7 +101,7 @@ module.exports = {
         });
       }
 
-      if (req.user.id !== bid.buyerId) {
+      if (req.user.id !== product.createdBy) {
         return res.status(403).json({
           message: 'Forbidden',
         });
@@ -107,9 +113,9 @@ module.exports = {
         });
       }
 
-      await bid.update({
-        declinedAt: new Date(),
-      });
+      // await bid.update({
+      //   declinedAt: new Date(),
+      // });
 
       return res.status(200).json({
         message: 'OK',
@@ -125,6 +131,11 @@ module.exports = {
   async handleFinishSale(req, res) {
     try {
       const bid = await Bids.findByPk(req.params.id);
+      const product = await Products.findOne({
+        where: {
+          id: bid.productId,
+        },
+      });
 
       if (!bid) {
         return res.status(404).json({
@@ -132,7 +143,7 @@ module.exports = {
         });
       }
 
-      if (req.user.id !== bid.buyerId) {
+      if (req.user.id !== product.createdBy) {
         return res.status(403).json({
           message: 'Forbidden',
         });
