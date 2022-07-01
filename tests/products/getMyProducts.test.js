@@ -58,7 +58,7 @@ describe('GET products/my-products', () => {
             terjual: expect.any(Array),
             count: expect.any(Number)
           })
-        )
+        );
       });
   });
 
