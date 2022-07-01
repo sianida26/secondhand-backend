@@ -1,5 +1,3 @@
-const jwt = require('jsonwebtoken');
-const JWT_KEY = process.env.JWT_KEY || "Rahasia";
 const { Users } = require('../../models');
 
 module.exports = {
@@ -26,13 +24,12 @@ module.exports = {
   },
 
   async editUserId(req, res) {
-    const token = req.headers.authorization.split("Bearer ")[1];
-    const tokenPayload = jwt.verify(token, JWT_KEY);
+    const userId = req.user;
     let { name, city, address, phone } = req.body;
 
-    //Validasi input user
+    // Validasi input user
     if (!(name && city && address && phone)) {
-      return res.status(400).json({
+      return res.status(422).json({
         message: "Terdapat data yang tidak sesuai.",
         errors: {
           name: name ? undefined : "Nama harus diisi!",
@@ -44,7 +41,7 @@ module.exports = {
     }
 
     if (phone.length < 10) {
-      return res.status(400).json({
+      return res.status(422).json({
         message: "Terdapat data yang tidak sesuai.",
         errors: {
           phone: "No. Handphone minimal 10 karakter"
@@ -54,7 +51,7 @@ module.exports = {
 
     const filter = /^\+?[0-9]{10,14}$/;
     if(phone.search(filter) == -1) {
-      return res.status(400).json({
+      return res.status(422).json({
         message: "Terdapat data yang tidak sesuai.",
         errors: {
           phone: "Format No. Handphone salah"
@@ -74,7 +71,7 @@ module.exports = {
       phone = `+62${phone}`;
     }
 
-    const userInfo = await Users.findByPk(tokenPayload.id);
+    const userInfo = await Users.findByPk(userId.id);
 
     await Users.update({
       name,
@@ -83,11 +80,11 @@ module.exports = {
       phone,
       image: req.file ? req.file.filename : userInfo.image
     }, {
-      where: { id: tokenPayload.id }
+      where: { id: userId.id }
     }).then(() => {
       res.status(201).json({
         message: "OK",
-        detail: `User with id ${tokenPayload.id} has been updated!`
+        detail: `User with id ${userId.id} has been updated!`
       })
     }).catch((err) => {
       res.status(400).json({
