@@ -75,7 +75,7 @@ describe('GET products/my-products', () => {
             message: expect.any(String),
             // error: expect.any(String)
           })
-        )
+        );
       });
   });
 });
