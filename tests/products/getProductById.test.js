@@ -58,7 +58,7 @@ describe('GET products/detail/:id', () => {
             }),
             description: expect.any(String)
           })
-        )
+        );
       });
   });
 
