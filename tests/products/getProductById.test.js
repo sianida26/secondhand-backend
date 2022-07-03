@@ -58,7 +58,7 @@ describe('GET products/detail/:id', () => {
             }),
             description: expect.any(String)
           })
-        )
+        );
       });
   });
 
@@ -74,7 +74,7 @@ describe('GET products/detail/:id', () => {
             message: expect.any(String),
             errors: expect.any(String)
           })
-        )
+        );
       });
   });
 });
