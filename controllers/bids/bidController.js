@@ -1,4 +1,5 @@
 const { Products, Bids } = require('../../models');
+const sendEmailToBuyer = require('../../services/sendEmail');
 
 module.exports = {
   async handleBidHistory(req, res) {
@@ -69,14 +70,14 @@ module.exports = {
         });
       }
 
-      // await bid.update({
-      //   acceptedAt: new Date(),
-      // });
+      await bid.update({
+        acceptedAt: new Date(),
+      });
+
+      sendEmailToBuyer();
 
       return res.status(200).json({
         message: 'OK',
-        sellerYgLoginNow: req.user.id,
-        product,
       });
     } catch (err) {
       return res.status(500).json({
@@ -113,9 +114,9 @@ module.exports = {
         });
       }
 
-      // await bid.update({
-      //   declinedAt: new Date(),
-      // });
+      await bid.update({
+        declinedAt: new Date(),
+      });
 
       return res.status(200).json({
         message: 'OK',
