@@ -1,5 +1,3 @@
-const jwt = require('jsonwebtoken');
-const JWT_KEY = process.env.JWT_KEY || 'Rahasia';
 const { Products, Bids } = require('../../models');
 const { Op } = require('sequelize');
 
@@ -19,7 +17,7 @@ module.exports = {
     }
   },
 
-  async handleGetProductbyId(req, res) {
+  async handleGetProductById(req, res) {
     try {
       const productId = await Products.findOne({ where: { id: req.params.id }, include: ['users'] });
       res.status(200).json({
@@ -43,11 +41,10 @@ module.exports = {
 
   async handleListMyProducts(req, res) {
     try {
-      const token = req.headers.authorization.split('Bearer ')[1];
-      const tokenPayload = jwt.verify(token, JWT_KEY);
+      const userId = req.user;
       const myProducts = await Products.findAndCountAll({
         where: {
-          createdBy: tokenPayload.id,
+          createdBy: userId.id,
         },
         include: [
           {
@@ -85,6 +82,7 @@ module.exports = {
                 image: images,
                 buyerName: bid.users.name,
                 bidPrice: bid.bidPrice,
+                bidTimestamp: bid.createdAt,
               });
             }
 
@@ -97,13 +95,13 @@ module.exports = {
                 image: images,
                 buyerName: bid.users.name,
                 bidPrice: bid.bidPrice,
-                soldAt: bid.soldAt,
+                bidTimestamp: bid.createdAt,
+                soldTimestamp: bid.soldAt,
               });
             }
           });
         }
       });
-
       res.status(200).json({
         products: products,
         diminati: interestedProducts,
@@ -120,7 +118,6 @@ module.exports = {
 
   async deleteProduct(req, res) {
     const product = await Products.findByPk(req.params.id);
-
     //Return 404 if not found
     if (!product) return res.status(404).json({ message: 'Produk tidak ditemukan.' });
 

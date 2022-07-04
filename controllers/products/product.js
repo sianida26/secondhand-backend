@@ -1,52 +1,20 @@
 const { Products } = require('../../models');
+const Validator = require('../../utils/Validator');
 
 module.exports = {
-  async getProduct(req, res) {
-    const getAllProducts = await Products.findAndCountAll()
-      .then((allProducts) => {
-        res.status(200).json({
-          status: 'Success',
-          data: allProducts.rows,
-          count: allProducts.count,
-        });
-      })
-      .catch((err) => {
-        res.status(400).json({
-          status: 'Failed',
-          message: err.message,
-        });
-      });
-  },
-
-  async getProductbyId(req, res) {
-    const productId = await Products.findOne({ where: { id: req.params.id } })
-      .then((productId) => {
-        res.status(200).json({
-          status: 'Success',
-          data: productId,
-        });
-      })
-      .catch((err) => {
-        res.status(400).json({
-          status: 'Failed',
-          message: err.message,
-        });
-      });
-  },
-
   async getMyProduct(req, res) {
     const myProducts = await Products.findAndCountAll({ where: { createdBy: req.params.id } })
       .then((allMyProducts) => {
         res.status(200).json({
           status: 'Success',
           data: allMyProducts.rows,
-          count: allMyProducts.count,
+          count: allMyProducts.count
         });
       })
       .catch((err) => {
         res.status(400).json({
           status: 'Failed',
-          message: err.message,
+          message: err.message
         });
       });
   },
@@ -55,19 +23,19 @@ module.exports = {
     const myProductId = await Products.findOne({
       where: {
         id: req.params.id,
-        createdBy: req.params.user,
+        createdBy: req.params.user
       },
     })
       .then((productId) => {
         return res.status(200).json({
           status: 'Success',
-          data: productId,
+          data: productId
         });
       })
       .catch((err) => {
         return res.status(400).json({
           status: 'Failed',
-          message: err.message,
+          message: err.message
         });
       });
   },
@@ -76,9 +44,25 @@ module.exports = {
     try {
       const { name, price, category, description } = req.body;
 
-      if (!name || !price || !category || !description || !req.files['filenames']) {
+      const rules = Validator.rules;
+      const validator = new Validator({
+        name,
+        price,
+        category,
+        description,
+        files: req.files['filenames']
+      }, {
+        name: [ rules.required(), rules.max(255) ],
+        price: [ rules.required(), rules.number(), rules.min(0) ],
+        category: [ rules.required(), rules.max(255) ],
+        description: [ rules.required() ],
+        files: [ rules.required(), rules.array(), rules.max(4) ]
+      })
+
+      if (validator.fails()) {
         return res.status(422).json({
-          message: 'Semua input harus diisi',
+          message: "Ada data yang tidak sesuai.",
+          errors: validator.getErrors()
         });
       }
 
@@ -115,12 +99,33 @@ module.exports = {
   async handleEditProductById(req, res) {
     try {
       const { name, price, category, description } = req.body;
-
       const product = await Products.findByPk(req.params.id);
 
-      if (!name || !price || !category || !description || !req.files['filenames']) {
+      const rules = Validator.rules;
+      const validator = new Validator({
+        name,
+        price,
+        category,
+        description,
+        files: req.files['filenames']
+      }, {
+        name: [ rules.required(), rules.max(255) ],
+        price: [ rules.required(), rules.number(), rules.min(0) ],
+        category: [ rules.required(), rules.max(255) ],
+        description: [ rules.required() ],
+        files: [ rules.required(), rules.array(), rules.max(4) ]
+      })
+
+      if (product.createdBy != req.user.id) {
+        return res.status(403).json({
+          message: "Unauthorized"
+        })
+      }
+
+      if (validator.fails()) {
         return res.status(422).json({
-          message: 'Semua input harus diisi',
+          message: "Ada data yang tidak sesuai.",
+          errors: validator.getErrors()
         });
       }
 
@@ -130,7 +135,7 @@ module.exports = {
 
       if (filenames.length > 4) {
         return res.status(422).json({
-          message: 'File maximal 4',
+          message: 'File maximal 4'
         });
       }
 
@@ -140,7 +145,7 @@ module.exports = {
         category,
         description,
         filenames: files,
-        createdBy: req.user.id,
+        createdBy: req.user.id
       });
 
       return res.status(200).json({
@@ -149,7 +154,7 @@ module.exports = {
     } catch (err) {
       return res.status(500).json({
         name: err.name,
-        message: err.message,
+        message: err.message
       });
     }
   },
