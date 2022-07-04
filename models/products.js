@@ -1,9 +1,7 @@
 'use strict';
-const {
-  Model
-} = require('sequelize');
-const { bid } = require('../controllers/bids');
-const { Users } = require('./index');
+const { Model } = require('sequelize');
+// const { bid } = require('../controllers/bids');
+const { Users, Bids } = require('./index');
 module.exports = (sequelize, DataTypes) => {
   class Products extends Model {
     /**
@@ -15,35 +13,38 @@ module.exports = (sequelize, DataTypes) => {
       // define association here
       Products.belongsTo(models.Users, {
         foreignKey: 'createdBy',
-        as: 'users'
+        as: 'users',
       });
       Products.hasMany(models.Bids, {
         foreignKey: 'productId',
-        as: 'bids'
+        as: 'bids',
       });
     }
 
-    isBiddable(){
+    isBiddable() {
       //TODO: Filter items on database level for better performance
-      return this.bids.every(bid => (!bid.soldAt && (!bid.acceptedAt || bid.acceptedAt && bid.declinedAt)));
+      return this.Bids.every((bid) => !bid.soldAt && (!bid.acceptedAt || (bid.acceptedAt && bid.declinedAt)));
     }
   }
-  Products.init({
-    name: DataTypes.STRING,
-    price: DataTypes.INTEGER,
-    category: DataTypes.STRING,
-    description: DataTypes.TEXT,
-    filenames: DataTypes.TEXT,
-    createdBy: {
-      type: DataTypes.INTEGER,
-      references: {
-        model: Users,
-        key: 'id'
-      }
+  Products.init(
+    {
+      name: DataTypes.STRING,
+      price: DataTypes.INTEGER,
+      category: DataTypes.STRING,
+      description: DataTypes.TEXT,
+      filenames: DataTypes.TEXT,
+      createdBy: {
+        type: DataTypes.INTEGER,
+        references: {
+          model: Users,
+          key: 'id',
+        },
+      },
+    },
+    {
+      sequelize,
+      modelName: 'Products',
     }
-  }, {
-    sequelize,
-    modelName: 'Products',
-  });
+  );
   return Products;
 };

@@ -34,6 +34,7 @@ const handleLogin = async (req, res) => {
 
     res.status(200).json({
       name: user.name,
+      city: user.city,
       profilePhoto,
       token: accessToken,
     });

@@ -11,19 +11,22 @@ module.exports = {
     await Users.create({
       email: email.toLowerCase(),
       password: hashedPassword,
-      name
-    }).then((createUser) => {
-      const token = jwt.sign({ id: createUser.id, name: name, email: email }, JWT_KEY);
-      res.status(201).json({
-        name: createUser.name,
-        token: token,
-        profilePhoto: `https://avatars.dicebear.com/api/bottts/${createUser.id}.svg`
+      name,
+    })
+      .then((createUser) => {
+        const token = jwt.sign({ id: createUser.id, name: name, email: email }, JWT_KEY);
+        res.status(201).json({
+          name: createUser.name,
+          city: createUser.city,
+          token: token,
+          profilePhoto: `https://avatars.dicebear.com/api/bottts/${createUser.id}.svg`,
+        });
       })
-    }).catch((err) => {
-      res.status(422).json({
-        message: "Terdapat data yang tidak sesuai.",
-        errors: err.message
-      })
-    });
-  }
+      .catch((err) => {
+        res.status(422).json({
+          message: 'Terdapat data yang tidak sesuai.',
+          errors: err.message,
+        });
+      });
+  },
 };

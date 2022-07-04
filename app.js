@@ -10,6 +10,7 @@ const swaggerDocument = require('./docs/swagger.json');
 var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/users');
 var productsRouter = require('./routes/products');
+var bidsRouter = require('./routes/bids');
 
 var app = express();
 
@@ -24,6 +25,7 @@ app.use('/images', express.static(path.join(__dirname, 'images')));
 app.use('/', indexRouter);
 app.use('/users', usersRouter);
 app.use('/products', productsRouter);
+app.use('/bids', bidsRouter);
 
 app.get('/documentation.json', (req, res) => res.send(swaggerDocument));
 app.use('/documentation', swaggerUi.serve, swaggerUi.setup(swaggerDocument));

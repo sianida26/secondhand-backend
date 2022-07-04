@@ -1,4 +1,6 @@
 const { Products, Bids } = require('../../models');
+const sendEmailToBuyer = require('../../services/sendEmail');
+
 const { Op } = require('sequelize');
 const moment = require('moment');
 
@@ -7,19 +9,19 @@ module.exports = {
     try {
       const bidHistory = await Bids.findOne({
         where: {
-          id: req.params.id
+          id: req.params.id,
         },
-        include: ['users', 'products']
+        include: ['users', 'products'],
       });
 
       const productsCheck = await Products.findOne({
         where: {
-          id: bidHistory.productId
+          id: bidHistory.productId,
         },
-        include: ['bids']
+        include: ['bids'],
       });
 
-      let productAcc = productsCheck.bids.find(bid => bid.acceptedAt);
+      let productAcc = productsCheck.bids.find((bid) => bid.acceptedAt);
 
       res.status(200).json({
         id: bidHistory.id,
@@ -27,20 +29,19 @@ module.exports = {
         buyerCity: bidHistory.users.city,
         buyerPhone: bidHistory.users.phone,
         productName: bidHistory.products.name,
-        productImage: JSON.parse(bidHistory.products.filenames).map(image => `https://secondhand-backend-kita.herokuapp.com/images/products/${image}`)[0],
+        productImage: JSON.parse(bidHistory.products.filenames).map((image) => `https://secondhand-backend-kita.herokuapp.com/images/products/${image}`)[0],
         productPrice: bidHistory.products.price,
         bidPrice: bidHistory.bidPrice,
         bidAt: bidHistory.createdAt,
         acceptedAt: bidHistory.acceptedAt,
         declinedAt: bidHistory.declinedAt,
         soldAt: bidHistory.soldAt,
-        isAcceptable: !productAcc
+        isAcceptable: !productAcc,
       });
-
     } catch (err) {
       res.status(404).json({
         message: `Product with id ${req.params.id} not found`,
-        errors: err.message
+        errors: err.message,
       });
     }
   },
@@ -53,34 +54,34 @@ module.exports = {
         where: {
           createdBy: userId.id,
           updatedAt: {
-            [Op.gte]: moment().subtract(months, "months")
-          }
+            [Op.gte]: moment().subtract(months, 'months'),
+          },
         },
-        include: ['bids']
+        include: ['bids'],
       });
       const myBids = await Bids.findAndCountAll({
         where: {
           buyerId: userId.id,
           updatedAt: {
-            [Op.gte]: moment().subtract(months, "months")
-          }
+            [Op.gte]: moment().subtract(months, 'months'),
+          },
         },
-        include: ['products']
+        include: ['products'],
       });
 
       let id = 0;
       let notif = [];
 
       myProducts.rows.map((product) => {
-        let images = product.filenames ? JSON.parse(product.filenames).map(image => `https://secondhand-backend-kita.herokuapp.com/images/products/${image}`)[0] : "";
+        let images = product.filenames ? JSON.parse(product.filenames).map((image) => `https://secondhand-backend-kita.herokuapp.com/images/products/${image}`)[0] : '';
 
         notif.push({
           id: 0,
           productName: product.name,
           price: product.price,
           image: images,
-          type: "Berhasil diterbitkan",
-          time: product.updatedAt
+          type: 'Berhasil diterbitkan',
+          time: product.updatedAt,
         });
 
         if (product.bids != '') {
@@ -91,9 +92,9 @@ module.exports = {
                 productName: product.name,
                 price: product.price,
                 image: images,
-                type: "Penawaran produk",
+                type: 'Penawaran produk',
                 bidPrice: bid.bidPrice,
-                time: bid.createdAt
+                time: bid.createdAt,
               });
             }
 
@@ -103,9 +104,9 @@ module.exports = {
                 productName: product.name,
                 price: product.price,
                 image: images,
-                type: "Penawaran ditolak",
+                type: 'Penawaran ditolak',
                 bidPrice: bid.bidPrice,
-                time: bid.declinedAt
+                time: bid.declinedAt,
               });
             }
 
@@ -115,9 +116,9 @@ module.exports = {
                 productName: product.name,
                 price: product.price,
                 image: images,
-                type: "Berhasil terjual",
+                type: 'Berhasil terjual',
                 bidPrice: bid.bidPrice,
-                time: bid.soldAt
+                time: bid.soldAt,
               });
             }
           });
@@ -125,16 +126,16 @@ module.exports = {
       });
 
       myBids.rows.map((bid) => {
-        let images = bid.products.filenames ? JSON.parse(bid.products.filenames).map(image => `https://secondhand-backend-kita.herokuapp.com/images/products/${image}`)[0] : "";
+        let images = bid.products.filenames ? JSON.parse(bid.products.filenames).map((image) => `https://secondhand-backend-kita.herokuapp.com/images/products/${image}`)[0] : '';
 
         notif.push({
           id: 0,
           productName: bid.products.name,
           price: bid.products.price,
           image: images,
-          type: "Penawaran produk",
+          type: 'Penawaran produk',
           bidPrice: bid.bidPrice,
-          time: bid.createdAt
+          time: bid.createdAt,
         });
 
         if (bid.acceptedAt) {
@@ -143,9 +144,9 @@ module.exports = {
             productName: bid.products.name,
             price: bid.products.price,
             image: images,
-            type: "Penawaran diterima",
+            type: 'Penawaran diterima',
             bidPrice: bid.bidPrice,
-            time: bid.acceptedAt
+            time: bid.acceptedAt,
           });
         }
 
@@ -155,30 +156,156 @@ module.exports = {
             productName: bid.products.name,
             price: bid.products.price,
             image: images,
-            type: "Penawaran ditolak",
+            type: 'Penawaran ditolak',
             bidPrice: bid.bidPrice,
-            time: bid.declinedAt
-          })
+            time: bid.declinedAt,
+          });
         }
       });
 
       notif.sort((a, b) => new Date(b.time).getTime() - new Date(a.time).getTime());
-      notif.map(rows => rows.id = id++);
+      notif.map((rows) => (rows.id = id++));
 
       // if (notif.length > 10) {
       //   notif = notif.slice(0, 10);
       // }
 
       res.status(200).json({
-        data: notif
+        data: notif,
       });
-
     } catch (err) {
       return res.status(403).json({
-        message: "",
-        errors: err.message
-      })
+        message: '',
+        errors: err.message,
+      });
     }
-  }
+  },
 
-}
+  async handleAcceptBids(req, res) {
+    try {
+      const bid = await Bids.findByPk(req.params.id);
+      const product = await Products.findOne({
+        where: {
+          id: bid.productId,
+        },
+      });
+
+      if (!bid) {
+        return res.status(404).json({
+          message: `Bid tidak ditemukan`,
+        });
+      }
+
+      if (req.user.id !== product.createdBy) {
+        return res.status(403).json({
+          message: 'Forbidden',
+        });
+      }
+
+      if (bid.declinedAt !== null || bid.soldAt !== null) {
+        return res.status(403).json({
+          message: 'Forbidden',
+        });
+      }
+
+      await bid.update({
+        acceptedAt: new Date(),
+      });
+
+      sendEmailToBuyer();
+
+      return res.status(200).json({
+        message: 'OK',
+      });
+    } catch (err) {
+      return res.status(500).json({
+        name: err.name,
+        message: err.message,
+      });
+    }
+  },
+
+  async handleRejectBids(req, res) {
+    try {
+      const bid = await Bids.findByPk(req.params.id);
+      const product = await Products.findOne({
+        where: {
+          id: bid.productId,
+        },
+      });
+
+      if (!bid) {
+        return res.status(404).json({
+          message: `Bid tidak ditemukan`,
+        });
+      }
+
+      if (req.user.id !== product.createdBy) {
+        return res.status(403).json({
+          message: 'Forbidden',
+        });
+      }
+
+      if (bid.soldAt !== null) {
+        return res.status(403).json({
+          message: 'Forbidden',
+        });
+      }
+
+      await bid.update({
+        declinedAt: new Date(),
+      });
+
+      return res.status(200).json({
+        message: 'OK',
+      });
+    } catch (err) {
+      return res.status(500).json({
+        name: err.name,
+        message: err.message,
+      });
+    }
+  },
+
+  async handleFinishSale(req, res) {
+    try {
+      const bid = await Bids.findByPk(req.params.id);
+      const product = await Products.findOne({
+        where: {
+          id: bid.productId,
+        },
+      });
+
+      if (!bid) {
+        return res.status(404).json({
+          message: `Bid tidak ditemukan`,
+        });
+      }
+
+      if (req.user.id !== product.createdBy) {
+        return res.status(403).json({
+          message: 'Forbidden',
+        });
+      }
+
+      if (bid.declinedAt !== null) {
+        return res.status(403).json({
+          message: 'Forbidden',
+        });
+      }
+
+      await bid.update({
+        soldAt: new Date(),
+      });
+
+      return res.status(200).json({
+        message: 'OK',
+      });
+    } catch (err) {
+      return res.status(500).json({
+        name: err.name,
+        message: err.message,
+      });
+    }
+  },
+};
