@@ -212,7 +212,17 @@ module.exports = {
         acceptedAt: new Date(),
       });
 
-      sendEmailToBuyer();
+      const emailData = {
+        buyerName: req.user.name,
+        bidId: bid.id,
+        productName: product.name,
+        bidPrice: bid.bidPrice,
+        buyerEmail: req.user.email,
+        subject: 'Penawaran Kamu Sudah Diterima',
+        status: 'Diterima',
+      };
+
+      sendEmailToBuyer(emailData.buyerName, emailData.bidId, emailData.productName, emailData.bidPrice, emailData.buyerEmail, emailData.subject, emailData.status);
 
       return res.status(200).json({
         message: 'OK',
@@ -255,6 +265,18 @@ module.exports = {
       await bid.update({
         declinedAt: new Date(),
       });
+
+      const emailData = {
+        buyerName: req.user.name,
+        bidId: bid.id,
+        productName: product.name,
+        bidPrice: bid.bidPrice,
+        buyerEmail: req.user.email,
+        subject: 'Penawaran Kamu Ditolak',
+        status: 'Ditolak',
+      };
+
+      sendEmailToBuyer(emailData.buyerName, emailData.bidId, emailData.productName, emailData.bidPrice, emailData.buyerEmail, emailData.subject, emailData.status);
 
       return res.status(200).json({
         message: 'OK',
