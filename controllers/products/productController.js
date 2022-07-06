@@ -20,6 +20,9 @@ module.exports = {
   async handleGetProductById(req, res) {
     try {
       const productId = await Products.findOne({ where: { id: req.params.id }, include: ['users'] });
+      const profilePhoto = productId.users.image ? `https://secondhand-backend-kita.herokuapp.com/images/profile/${user.image}` 
+        : `https://avatars.dicebear.com/api/bottts/${user.id}.svg`;
+
       res.status(200).json({
         id: productId.id,
         name: productId.name,
@@ -29,7 +32,9 @@ module.exports = {
         seller: {
           name: productId.users.name,
           city: productId.users.city,
+          profilePicture: profilePhoto
         },
+        price: productId.price,
       });
     } catch (err) {
       res.status(404).json({
