@@ -39,7 +39,7 @@ router.get('/available', middlewares.authorization.optionalAuth, products.produc
 router.put('/:id', middlewares.authorization.authorize, cpUpload, products.handleEditProductById);
 router.get('/all', middlewares.authorization.authorize, products.product.handleGetAllProducts);
 router.get('/detail-buyer/:id', middlewares.authorization.optionalAuth, products.product.handleGetProductById);
-router.get('/detail/:id', middlewares.authorization.authorize, products.product.handleGetProductById);
+router.get('/detail/:id', products.product.handleGetProductById);
 router.get('/history/:id', middlewares.authorization.authorize, bids.bid.handleBidHistory);
 router.get('/my-products', middlewares.authorization.authorize, products.product.handleListMyProducts);
 router.delete('/delete-product/:id', middlewares.authorization.authorize, products.product.deleteProduct);
