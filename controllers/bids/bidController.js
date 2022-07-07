@@ -1,5 +1,5 @@
 const { Products, Bids } = require('../../models');
-const sendEmailToBuyer = require('../../services/sendEmail');
+const sendEmail = require('../../services/sendEmail');
 
 const { Op } = require('sequelize');
 const moment = require('moment');
@@ -212,7 +212,7 @@ module.exports = {
         acceptedAt: new Date(),
       });
 
-      sendEmailToBuyer();
+      sendEmail.sendEmailToBuyer();
 
       return res.status(200).json({
         message: 'OK',
