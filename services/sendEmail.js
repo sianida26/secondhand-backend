@@ -1,6 +1,7 @@
 require('dotenv').config();
 const nodemailer = require('nodemailer');
 const emailContentAcceptBids = require('../utils/emailContentAcceptBid');
+const emailContentForgotPassword = require('../utils/emailContentForgotPassword');
 
 const { SMTP_HOST, SMTP_PORT, SMTP_USERNAME, SMTP_PASSWORD } = process.env;
 
@@ -8,6 +9,11 @@ function sendEmailToBuyer() {
   const email = 'serwilhan@gmail.com';
   const subject = 'Penawaran Kamu Sudah Diterima';
   sendEmail(email, subject, emailContentAcceptBids());
+}
+
+function sendEmailToUserForgotPassword(email, token) {
+  const subject = "SecondHand Reset Password";
+  sendEmail(email, subject, emailContentForgotPassword(token));
 }
 
 async function sendEmail(to, subject, content) {
@@ -35,4 +41,7 @@ async function sendEmail(to, subject, content) {
   }
 }
 
-module.exports = sendEmailToBuyer;
+module.exports = {
+  sendEmailToBuyer,
+  sendEmailToUserForgotPassword
+};
