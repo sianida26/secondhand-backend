@@ -32,7 +32,12 @@ module.exports = (sequelize, DataTypes) => {
       price: DataTypes.INTEGER,
       category: DataTypes.STRING,
       description: DataTypes.TEXT,
-      filenames: DataTypes.TEXT,
+      filenames: {
+        type: DataTypes.TEXT,
+        set(value){
+          return Array.isArray(value) ? JSON.stringify(value) : value;
+        }
+      },
       createdBy: {
         type: DataTypes.INTEGER,
         references: {

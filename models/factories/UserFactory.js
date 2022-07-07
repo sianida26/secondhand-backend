@@ -1,7 +1,7 @@
 const bcrypt = require('bcryptjs');
 
-import { faker } from '@faker-js/faker';
-import { Users } from '../index';
+const { faker } = require('@faker-js/faker');
+const { Users } = require('../index');
 
 const defaultProps = {
     email: faker.internet.exampleEmail(),
@@ -20,13 +20,13 @@ const defaultProps = {
  * 
  * @return {Object}       A user instance
  */
-export default async (props = {}) => {
+module.exports = async (props = {}) => {
     const data = {
         ...defaultProps,
         ...props,
     }
 
-    await Users.create({
+    return await Users.create({
         ...data,
         password: await bcrypt.hash(data.password, 10)
     })

@@ -1,7 +1,7 @@
 const bcrypt = require('bcryptjs');
 
-import { faker } from '@faker-js/faker';
-import { Products } from '../index';
+const { faker } = require('@faker-js/faker');
+const { Products } = require('../index');
 
 const defaultProps = {
     name: faker.animal.cat(),
@@ -19,12 +19,12 @@ const defaultProps = {
  * 
  * @return {Object}       A product instance
  */
-export default async (creator, props = {}) => {
+module.exports = async (creator, props = {}) => {
     const data = {
         ...defaultProps,
         ...props,
         createdBy: creator.id,
     }
 
-    await Products.create(data)
+    return await Products.create(data)
 }
