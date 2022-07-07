@@ -21,9 +21,10 @@ module.exports = (sequelize, DataTypes) => {
       });
     }
 
-    isBiddable() {
+    async isBiddable() {
       //TODO: Filter items on database level for better performance
-      return this.Bids.every((bid) => !bid.soldAt && (!bid.acceptedAt || (bid.acceptedAt && bid.declinedAt)));
+      const bids = await this.getBids();
+      return bids.every((bid) => !bid.soldAt && (!bid.acceptedAt || (bid.acceptedAt && bid.declinedAt)));
     }
   }
   Products.init(
@@ -51,5 +52,6 @@ module.exports = (sequelize, DataTypes) => {
       modelName: 'Products',
     }
   );
+  // Products.hasMany(Bids, { foreignKey: 'productId' });
   return Products;
 };

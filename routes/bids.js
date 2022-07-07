@@ -11,5 +11,6 @@ router.get('/', function (req, res) {
 router.post('/accept/:id', middlewares.authorization.authorize, bids.bid.handleAcceptBids);
 router.post('/reject/:id', middlewares.authorization.authorize, bids.bid.handleRejectBids);
 router.post('/finish/:id', middlewares.authorization.authorize, bids.bid.handleFinishSale);
+router.post('/make-bid', middlewares.authorization.authorize, bids.bid.createBid);
 
 module.exports = router;

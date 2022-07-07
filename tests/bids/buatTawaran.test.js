@@ -8,7 +8,7 @@ const { Bids } = require('../../models');
 
 describe('Fitur buat tawaran', () => {
 
-    const ENDPOINT_PATH = '/products/delete-product';
+    const ENDPOINT_PATH = '/bids/make-bid';
     let buyer = null;
     let seller = null;
     let otherBuyer = null;
@@ -37,7 +37,6 @@ describe('Fitur buat tawaran', () => {
     it('Should return 401 if not authenticated', async () => {
         const response = await request(app)
             .post(ENDPOINT_PATH)
-            .set('Authorization', buyer.accessToken)
             .send({ id: product.id, bidPrice: 20000});
 
         expect(response.status).toBe(401);
@@ -47,7 +46,7 @@ describe('Fitur buat tawaran', () => {
     it('Should return 404 if product is not available', async () => {
         const response = await request(app)
             .post(ENDPOINT_PATH)
-            .set('Authorization', buyer.accessToken)
+            .set('Authorization', `Bearer ${ buyer.accessToken }`)
             .send({ id: 9999999, bidPrice: 20000});
         
         expect(response.status).toBe(404);
@@ -62,7 +61,7 @@ describe('Fitur buat tawaran', () => {
         //send request
         const response = await request(app)
             .post(ENDPOINT_PATH)
-            .set('Authorization', buyer.accessToken)
+            .set('Authorization', `Bearer ${ buyer.accessToken }`)
             .send({ id: product.id, bidPrice: 20000});
         
         expect(response.status).toBe(404);
@@ -72,26 +71,26 @@ describe('Fitur buat tawaran', () => {
     it('Should return 403 if attempting to bid his own product', async () => {
         const response = await request(app)
             .post(ENDPOINT_PATH)
-            .set('Authorization', seller.accessToken)
+            .set('Authorization', `Bearer ${ seller.accessToken }`)
             .send({ id: product.id, bidPrice: 20000});
         
-        expect(response.status).toBe(404);
+        expect(response.status).toBe(403);
         expect(response.body.message).toBeDefined();
 
         const bidCount = await Bids.findAndCountAll({ where: { productId: product.id, buyerId: seller.id } });
-        expect(bidCount).toBe(0);
+        expect(bidCount.count).toBe(0);
     });
 
     it('Should return 200 if success', async () => {
         const response = await request(app)
             .post(ENDPOINT_PATH)
-            .set('Authorization', buyer.accessToken)
+            .set('Authorization', `Bearer ${ buyer.accessToken }`)
             .send({ id: product.id, bidPrice: 20000})
         
         expect(response.status).toBe(200);
         
         //Check into database
         const bidCount = await Bids.findAndCountAll({ where: { productId: product.id, buyerId: buyer.id } });
-        expect(bidCount).toBe(1);
+        expect(bidCount.count).toBe(1);
     });
 })

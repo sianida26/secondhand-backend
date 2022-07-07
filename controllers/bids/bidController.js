@@ -308,4 +308,29 @@ module.exports = {
       });
     }
   },
+
+  async createBid(req, res){
+    try {
+      const product = await Products.findByPk(req.body.id);
+
+      //if product not found, return 404
+      if (!product) return res.status(404).json({ message: 'Produk tidak ditemukan' });
+
+      //if product already been sold, return 404
+      if (!await product.isBiddable()) return res.status(404).json({ message: 'Produk telah ditarik penjual atau telah berhasil terjual' });
+
+      //if buys her product
+      console.log(`Created by ${ product.createdBy } and requested by ${ req.user.id }`)
+      if (product.createdBy == req.user.id) return res.status(403).json({ message: 'Anda tidak dapat menawar produk anda sendiri' });
+
+      //if price is less than 0
+      if (req.body.bidPrice < 0) return res.status(422).json({ errors: { bidPrice: 'Harga harus lebih dari Rp0!' } });
+
+      await Bids.create({ buyerId: req.user.id, productId: req.body.id, bidPrice: req.body.bidPrice });
+      return res.json({ message: 'Tawaran berhasil dibuat' });
+    } catch (error) {
+      console.error(error)
+      return res.status(500).json({ message: 'Terjadi kesalahan pada server' });
+    }
+  }
 };
