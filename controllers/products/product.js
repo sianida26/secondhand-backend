@@ -1,4 +1,6 @@
+const { ref, getDownloadURL, deleteObject, uploadBytes } = require('firebase/storage');
 const { Products } = require('../../models');
+const storage = require('../../services/firebase');
 const Validator = require('../../utils/Validator');
 
 module.exports = {
@@ -8,13 +10,13 @@ module.exports = {
         res.status(200).json({
           status: 'Success',
           data: allMyProducts.rows,
-          count: allMyProducts.count
+          count: allMyProducts.count,
         });
       })
       .catch((err) => {
         res.status(400).json({
           status: 'Failed',
-          message: err.message
+          message: err.message,
         });
       });
   },
@@ -23,19 +25,19 @@ module.exports = {
     const myProductId = await Products.findOne({
       where: {
         id: req.params.id,
-        createdBy: req.params.user
+        createdBy: req.params.user,
       },
     })
       .then((productId) => {
         return res.status(200).json({
           status: 'Success',
-          data: productId
+          data: productId,
         });
       })
       .catch((err) => {
         return res.status(400).json({
           status: 'Failed',
-          message: err.message
+          message: err.message,
         });
       });
   },
@@ -43,36 +45,48 @@ module.exports = {
   async handleCreateProduct(req, res) {
     try {
       const { name, price, category, description } = req.body;
+      let imageFilename = [];
+      let imageUrls = [];
+
+      await Promise.all(
+        req.files.map(async (e) => {
+          const file = e.buffer;
+          const storageRef = ref(storage, `images/products/${Date.now()}-${e.originalname}`);
+
+          imageFilename.push(`${Date.now()}-${e.originalname}`);
+
+          const metadata = {
+            contentType: e.mimetype,
+          };
+
+          const snapshot = await uploadBytes(storageRef, file, metadata);
+          const url = await getDownloadURL(snapshot.ref);
+          imageUrls.push(url);
+        })
+      );
 
       const rules = Validator.rules;
-      const validator = new Validator({
-        name,
-        price,
-        category,
-        description,
-        files: req.files['filenames']
-      }, {
-        name: [ rules.required(), rules.max(255) ],
-        price: [ rules.required(), rules.number(), rules.min(0) ],
-        category: [ rules.required(), rules.max(255) ],
-        description: [ rules.required() ],
-        files: [ rules.required(), rules.array(), rules.max(4) ]
-      })
+      const validator = new Validator(
+        {
+          name,
+          price,
+          category,
+          description,
+          // files: req.files['filenames'],
+        },
+        {
+          name: [rules.required(), rules.max(255)],
+          price: [rules.required(), rules.number(), rules.min(0)],
+          category: [rules.required(), rules.max(255)],
+          description: [rules.required()],
+          // files: [rules.required(), rules.array(), rules.max(4)],
+        }
+      );
 
       if (validator.fails()) {
         return res.status(422).json({
-          message: "Ada data yang tidak sesuai.",
-          errors: validator.getErrors()
-        });
-      }
-
-      // get req.files filename property
-      const filenames = req.files['filenames'].map((e) => e.filename);
-      const files = JSON.stringify(filenames);
-
-      if (filenames.length > 4) {
-        return res.status(422).json({
-          message: 'File maximal 4',
+          message: 'Ada data yang tidak sesuai.',
+          errors: validator.getErrors(),
         });
       }
 
@@ -81,12 +95,13 @@ module.exports = {
         price,
         category,
         description,
-        filenames: files,
+        imageUrls,
         createdBy: req.user.id,
       });
 
       return res.status(200).json({
         message: 'Produk berhasil diterbitkan',
+        imageUrls,
       });
     } catch (err) {
       return res.status(500).json({
@@ -102,30 +117,33 @@ module.exports = {
       const product = await Products.findByPk(req.params.id);
 
       const rules = Validator.rules;
-      const validator = new Validator({
-        name,
-        price,
-        category,
-        description,
-        files: req.files['filenames']
-      }, {
-        name: [ rules.required(), rules.max(255) ],
-        price: [ rules.required(), rules.number(), rules.min(0) ],
-        category: [ rules.required(), rules.max(255) ],
-        description: [ rules.required() ],
-        files: [ rules.required(), rules.array(), rules.max(4) ]
-      })
+      const validator = new Validator(
+        {
+          name,
+          price,
+          category,
+          description,
+          files: req.files['filenames'],
+        },
+        {
+          name: [rules.required(), rules.max(255)],
+          price: [rules.required(), rules.number(), rules.min(0)],
+          category: [rules.required(), rules.max(255)],
+          description: [rules.required()],
+          files: [rules.required(), rules.array(), rules.max(4)],
+        }
+      );
 
       if (product.createdBy != req.user.id) {
         return res.status(403).json({
-          message: "Unauthorized"
-        })
+          message: 'Unauthorized',
+        });
       }
 
       if (validator.fails()) {
         return res.status(422).json({
-          message: "Ada data yang tidak sesuai.",
-          errors: validator.getErrors()
+          message: 'Ada data yang tidak sesuai.',
+          errors: validator.getErrors(),
         });
       }
 
@@ -135,7 +153,7 @@ module.exports = {
 
       if (filenames.length > 4) {
         return res.status(422).json({
-          message: 'File maximal 4'
+          message: 'File maximal 4',
         });
       }
 
@@ -145,7 +163,7 @@ module.exports = {
         category,
         description,
         filenames: files,
-        createdBy: req.user.id
+        createdBy: req.user.id,
       });
 
       return res.status(200).json({
@@ -154,8 +172,27 @@ module.exports = {
     } catch (err) {
       return res.status(500).json({
         name: err.name,
-        message: err.message
+        message: err.message,
       });
     }
   },
+
+  // async handleDelete(req, res) {
+  //   try {
+  //     // Create a reference to the file to delete
+  //     const imageRef = ref(storage, 'images/products/1657277308560-img1.jpeg');
+
+  //     // Delete the file
+  //     await deleteObject(imageRef);
+
+  //     res.status(200).json({
+  //       message: 'File berhasil dihapus',
+  //     });
+  //   } catch (err) {
+  //     res.status(500).json({
+  //       name: err.name,
+  //       message: err.message,
+  //     });
+  //   }
+  // },
 };

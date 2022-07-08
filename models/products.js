@@ -1,5 +1,5 @@
 'use strict';
-const { Model } = require('sequelize');
+const { Model, json } = require('sequelize');
 // const { bid } = require('../controllers/bids');
 const { Users, Bids } = require('./index');
 module.exports = (sequelize, DataTypes) => {
@@ -33,6 +33,15 @@ module.exports = (sequelize, DataTypes) => {
       category: DataTypes.STRING,
       description: DataTypes.TEXT,
       filenames: DataTypes.TEXT,
+      imageUrls: {
+        type: DataTypes.VIRTUAL,
+        get() {
+          return JSON.parse(this.filenames);
+        },
+        set(value) {
+          this.setDataValue('filenames', JSON.stringify(value));
+        },
+      },
       createdBy: {
         type: DataTypes.INTEGER,
         references: {
