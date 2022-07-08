@@ -23,7 +23,7 @@ router.get('/', function(req, res, next) {
 });
 
 router.get('/notifications', middlewares.authorization.authorize, bids.bid.handleGetNotifications);
-router.post('/request-forgot-password', users.password.handleForgotPassword);
+router.post('/request-forgot-password', sendForgotPassword, users.password.handleForgotPassword);
 router.post('/reset-password', users.password.handleResetPassword);
 
 module.exports = router;
