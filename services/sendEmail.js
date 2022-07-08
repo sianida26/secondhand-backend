@@ -5,10 +5,8 @@ const emailContentForgotPassword = require('../utils/emailContentForgotPassword'
 
 const { SMTP_HOST, SMTP_PORT, SMTP_USERNAME, SMTP_PASSWORD } = process.env;
 
-function sendEmailToBuyer() {
-  const email = 'serwilhan@gmail.com';
-  const subject = 'Penawaran Kamu Sudah Diterima';
-  sendEmail(email, subject, emailContentAcceptBids());
+function sendEmailToBuyer(buyerName, bidId, productName, bidPrice, buyerEmail, subject, status) {
+  sendEmail(buyerEmail, subject, emailContentAcceptBids(buyerName, bidId, productName, bidPrice, status));
 }
 
 function sendEmailToUserForgotPassword(email, token) {
