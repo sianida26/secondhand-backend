@@ -50,13 +50,13 @@ module.exports = {
         price,
         category,
         description,
-        files: req.files['filenames']
+        // files: req.files['filenames']
       }, {
         name: [ rules.required(), rules.max(255) ],
         price: [ rules.required(), rules.number(), rules.min(0) ],
         category: [ rules.required(), rules.max(255) ],
         description: [ rules.required() ],
-        files: [ rules.required(), rules.array(), rules.max(4) ]
+        // files: [ rules.required(), rules.array(), rules.max(4) ]
       })
 
       if (validator.fails()) {
@@ -67,7 +67,8 @@ module.exports = {
       }
 
       // get req.files filename property
-      const filenames = req.files['filenames'].map((e) => e.filename);
+      console.log(req.files);
+      const filenames = req.files.map((e) => e.filename);
       const files = JSON.stringify(filenames);
 
       if (filenames.length > 4) {
