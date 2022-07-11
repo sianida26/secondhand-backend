@@ -44,6 +44,33 @@ module.exports = {
     }
   },
 
+  async handleGetProductByIdForBuyer(req, res) {
+    try {
+      const productId = await Products.findOne({ where: { id: req.params.id }, include: ['users'] });
+      const profilePhoto = productId.users.image ? `https://secondhand-backend-kita.herokuapp.com/images/profile/${productId.users.image}` 
+        : `https://avatars.dicebear.com/api/bottts/${productId.users.id}.svg`;
+
+      res.status(200).json({
+        id: productId.id,
+        name: productId.name,
+        images: productId.filenames ? JSON.parse(productId.filenames).map((image) => `https://secondhand-backend-kita.herokuapp.com/images/products/${image}`) : [],
+        category: productId.category,
+        description: productId.description,
+        seller: {
+          name: productId.users.name,
+          city: productId.users.city,
+          profilePicture: profilePhoto
+        },
+        price: productId.price,
+      });
+    } catch (err) {
+      res.status(404).json({
+        message: `Product with id ${req.params.id} not found`,
+        errors: err.message,
+      });
+    }
+  },
+
   async handleListMyProducts(req, res) {
     try {
       const userId = req.user;
