@@ -77,4 +77,7 @@ const createToken = (user) => {
   );
 };
 
-module.exports = { handleLogin, handleGetUser };
+module.exports = {
+  handleLogin,
+  handleGetUser
+};
