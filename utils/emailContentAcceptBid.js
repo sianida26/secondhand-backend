@@ -5,7 +5,6 @@ const emailContentAcceptBids = (buyer, noPesanan, productName, bidPrice, status)
       body {
         font-family: helvetica;
       }
-
       table {
         margin-top: 5px;
         border-top: 2px solid black;

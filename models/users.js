@@ -1,5 +1,8 @@
 'use strict';
 const { Model } = require('sequelize');
+const jwt = require('jsonwebtoken');
+const JWT_KEY = process.env.JWT_KEY || 'Rahasia';
+
 module.exports = (sequelize, DataTypes) => {
   class Users extends Model {
     /**
@@ -28,6 +31,12 @@ module.exports = (sequelize, DataTypes) => {
       address: DataTypes.STRING,
       phone: DataTypes.STRING,
       image: DataTypes.TEXT,
+      accessToken: {
+        type: DataTypes.VIRTUAL,
+        get(){
+          return jwt.sign({ id: this.id, name: this.name, email: this.email }, JWT_KEY)
+        }
+      }
     },
     {
       sequelize,

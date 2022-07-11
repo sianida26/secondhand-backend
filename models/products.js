@@ -21,9 +21,10 @@ module.exports = (sequelize, DataTypes) => {
       });
     }
 
-    isBiddable() {
+    async isBiddable() {
       //TODO: Filter items on database level for better performance
-      return this.Bids.every((bid) => !bid.soldAt && (!bid.acceptedAt || (bid.acceptedAt && bid.declinedAt)));
+      const bids = await this.getBids();
+      return bids.every((bid) => !bid.soldAt && (!bid.acceptedAt || (bid.acceptedAt && bid.declinedAt)));
     }
   }
   Products.init(
@@ -32,7 +33,12 @@ module.exports = (sequelize, DataTypes) => {
       price: DataTypes.INTEGER,
       category: DataTypes.STRING,
       description: DataTypes.TEXT,
-      filenames: DataTypes.TEXT,
+      filenames: {
+        type: DataTypes.TEXT,
+        set(value) {
+          return Array.isArray(value) ? JSON.stringify(value) : value;
+        },
+      },
       imageUrls: {
         type: DataTypes.VIRTUAL,
         get() {
@@ -55,5 +61,6 @@ module.exports = (sequelize, DataTypes) => {
       modelName: 'Products',
     }
   );
+  // Products.hasMany(Bids, { foreignKey: 'productId' });
   return Products;
 };
