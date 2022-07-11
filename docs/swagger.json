@@ -116,6 +116,92 @@
         "tags": ["Auth"]
       }
     },
+    "/request-forgot-password": {
+      "post": {
+        "summary": "Forgot Password",
+        "description": "Send Email Notifications",
+        "operationId": "forgotPassword",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "message": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Too many request."
+          },
+          "404": {
+            "description": "Not found."
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/coreForgotPasswordRequest"
+            }
+          }
+        ],
+        "tags": ["Auth"]
+      }
+    },
+    "/reset-password": {
+      "post": {
+        "summary": "Reset Password",
+        "description": "Reset and Update Password",
+        "operationId": "resetPassword",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "message": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not found."
+          },
+          "422": {
+            "description": "Unprocessable Entity."
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/coreResetPasswordRequest"
+            }
+          }
+        ],
+        "tags": ["Auth"]
+      }
+    },
     "/products/my-products": {
       "get": {
         "summary": "List My Products",
@@ -218,48 +304,6 @@
         "summary": "Get Product by Id",
         "description": "Retrieve product By Id",
         "operationId": "getProductById",
-        "security": [
-          {
-            "BearerTokenAuth": []
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "A successful response.",
-            "schema": {
-              "$ref": "#/definitions/coreGetProductByIdResponse"
-            }
-          },
-          "404": {
-            "description": "Product id not found"
-          },
-          "default": {
-            "description": "An unexpected error response.",
-            "schema": {
-              "$ref": "#/definitions/rpcStatus"
-            }
-          }
-        },
-        "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "required": true,
-            "type": "integer",
-            "format": "int64"
-          }
-        ],
-        "tags": [
-          "Products"
-        ]
-      }
-    },
-    "/products/detail-buyer/{id}": {
-      "get": {
-        "summary": "Get Product by Id",
-        "description": "Retrieve product By Id",
-        "operationId": "getProductById",
-        "security": [],
         "responses": {
           "200": {
             "description": "A successful response.",
@@ -600,7 +644,7 @@
               "items": {
                 "$ref": "#/definitions/coreGetNotifications"
               }
-            } 
+            }
           },
           "401": {
             "description": "Unauthenticated."
@@ -615,9 +659,7 @@
             }
           }
         },
-        "tags": [
-          "Bids"
-        ]
+        "tags": ["Bids"]
       }
     },
     "/users/lengkapi-profil": {
@@ -757,10 +799,35 @@
         }
       }
     },
+    "coreForgotPasswordRequest": {
+      "type": "object",
+      "properties": {
+        "email": {
+          "type": "string"
+        }
+      }
+    },
+    "coreResetPasswordRequest": {
+      "type": "object",
+      "properties": {
+        "token": {
+          "type": "string"
+        },
+        "password": {
+          "type": "string"
+        },
+        "password_confirmation": {
+          "type": "string"
+        }
+      }
+    },
     "coreCreateProductResponse": {
       "type": "object",
       "properties": {
         "message": {
+          "type": "string"
+        },
+        "imageUrls": {
           "type": "string"
         }
       }

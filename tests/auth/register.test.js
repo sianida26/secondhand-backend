@@ -1,5 +1,6 @@
 const request = require('supertest');
 const app = require('../../app');
+const { Users } = require('../../models');
 
 function generateString(length) {
   let result = '';
@@ -12,7 +13,28 @@ function generateString(length) {
 }
 
 describe('POST /users/register', () => {
-  it('should response with 201 as status code and return token', async () => {
+  let userProfile = null;
+
+  beforeAll(async () => {
+    const registerData = {
+      email: "test@gmail.com",
+      password: "test123",
+      name: "test"
+    }
+
+    const response = await request(app)
+      .post('/users/register')
+      .set('Accept', 'application/json')
+      .send(registerData);
+
+    userProfile = await Users.findOne({ where: { email: registerData.email } });
+  });
+
+  afterAll(async () => {
+    await userProfile.destroy();
+  });
+
+  it('should response with 201 as status code and return token', () => {
     const randomName = generateString(6);
     const email = `${randomName}@gmail.com`;
     const password = "12345";
@@ -33,9 +55,9 @@ describe('POST /users/register', () => {
       });
   });
 
-  it('should response with 422 as status code and return errors for data null', async () => {
-    const email = "kuku@gmail.com";
-    const password = "12345";
+  it('should response with 422 as status code and return errors for data null', () => {
+    const email = "test@gmail.com";
+    const password = "test123";
     const name = "";
 
     return request(app)
@@ -46,7 +68,7 @@ describe('POST /users/register', () => {
         expect(res.statusCode).toBe(422);
         expect(res.body).toEqual(
           expect.objectContaining({
-            message: res.body.message, //'Terdapat data yang tidak sesuai.',
+            message: expect.any(String),
             errors: res.body.errors
             // errors: {
             //   name: name ? name : "Nama harus diisi!"
@@ -56,10 +78,10 @@ describe('POST /users/register', () => {
       });
   });
 
-  it('should response with 422 as status code and return message for wrong password', async () => {
-    const email = "kuku@gmail.com";
+  it('should response with 422 as status code and return message for wrong password', () => {
+    const email = "test@gmail.com";
     const password = "1234";
-    const name = "kuku";
+    const name = "test";
 
     return request(app)
       .post('/users/register')
@@ -69,7 +91,7 @@ describe('POST /users/register', () => {
         expect(res.statusCode).toBe(422);
         expect(res.body).toEqual(
           expect.objectContaining({
-            message: res.body.message,
+            message: expect.any(String),
             errors: res.body.errors
             // message: 'Terdapat data yang tidak sesuai.',
             // errors: {
@@ -80,10 +102,10 @@ describe('POST /users/register', () => {
       });
   });
 
-  it('should response with 422 as status code and return message for wrong email format', async () => {
+  it('should response with 422 as status code and return message for wrong email format', () => {
     const email = "@gmailcom";
-    const password = "12345";
-    const name = "kuku";
+    const password = "test123";
+    const name = "test";
 
     return request(app)
       .post('/users/register')
@@ -93,7 +115,7 @@ describe('POST /users/register', () => {
         expect(res.statusCode).toBe(422);
         expect(res.body).toEqual(
           expect.objectContaining({
-            message: res.body.message,
+            message: expect.any(String),
             errors: res.body.errors
             // message: "Terdapat data yang tidak sesuai.",
             // errors: {
@@ -104,10 +126,10 @@ describe('POST /users/register', () => {
       });
   });
 
-  it('should response with 422 as status code and return message & errors for email already exists', async () => {
-    const email = "nana@gmail.com";
-    const password = "12345";
-    const name = "nana";
+  it('should response with 422 as status code and return message & errors for email already exists', () => {
+    const email = "test@gmail.com";
+    const password = "test123";
+    const name = "test";
 
     return request(app)
       .post('/users/register')
@@ -117,7 +139,7 @@ describe('POST /users/register', () => {
         expect(res.statusCode).toBe(422);
         expect(res.body).toEqual(
           expect.objectContaining({
-            message: res.body.message,
+            message: expect.any(String),
             errors: res.body.errors
             // message: "Terdapat data yang tidak sesuai.",
             // errors: {
@@ -126,5 +148,26 @@ describe('POST /users/register', () => {
           })
         );
       });
+  });
+
+  it('should response with 429 as status code and return too many request', async () => {
+    for (let i = 0; i < 10; i++) {
+      let randomName = generateString(6);
+      let email = `${randomName}@gmail.com`;
+      let password = "12345";
+      let name = randomName;
+
+      var response = await request(app)
+        .post('/users/register')
+        .set('Content-Type', 'application/json')
+        .send({ email, password, name })
+    }
+
+    expect(response.statusCode).toBe(429)
+    expect(response.body).toEqual(
+      expect.objectContaining({
+        message: expect.any(String)
+      })
+    )
   });
 });
