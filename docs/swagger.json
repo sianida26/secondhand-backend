@@ -330,9 +330,7 @@
             "format": "int64"
           }
         ],
-        "tags": [
-          "Products"
-        ]
+        "tags": ["Products"]
       }
     },
     "/products": {
@@ -646,7 +644,7 @@
               "items": {
                 "$ref": "#/definitions/coreGetNotifications"
               }
-            } 
+            }
           },
           "401": {
             "description": "Unauthenticated."
@@ -661,9 +659,7 @@
             }
           }
         },
-        "tags": [
-          "Bids"
-        ]
+        "tags": ["Bids"]
       }
     },
     "/users/lengkapi-profil": {
@@ -829,6 +825,9 @@
       "type": "object",
       "properties": {
         "message": {
+          "type": "string"
+        },
+        "imageUrls": {
           "type": "string"
         }
       }

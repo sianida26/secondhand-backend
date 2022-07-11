@@ -1,6 +1,9 @@
 const { Products, Bids } = require('../../models');
 const { Op } = require('sequelize');
 
+const storage = require('../../services/firebase');
+const { ref, deleteObject } = require('firebase/storage');
+
 module.exports = {
   async handleGetAllProducts(req, res) {
     try {
@@ -121,8 +124,22 @@ module.exports = {
     }
   },
 
-  async deleteProduct(req, res) {
+  async deleteProduct(req, res, next) {
     const product = await Products.findByPk(req.params.id);
+
+    // Delete image from firebase storage
+    product.imageUrls.map(async (imgUrl) => {
+      try {
+        // Create image ref from image url in firebase storage
+        const imageRef = ref(storage, imgUrl);
+
+        // Delete the file
+        await deleteObject(imageRef);
+      } catch (err) {
+        console.warn(err.message);
+      }
+    });
+
     //Return 404 if not found
     if (!product) return res.status(404).json({ message: 'Produk tidak ditemukan.' });
 
