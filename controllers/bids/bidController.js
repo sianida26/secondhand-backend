@@ -1,4 +1,4 @@
-const { Products, Bids } = require('../../models');
+const { Products, Bids, Users } = require('../../models');
 const sendEmailToBuyer = require('../../services/sendEmail');
 
 const { Op } = require('sequelize');
@@ -184,11 +184,8 @@ module.exports = {
   async handleAcceptBids(req, res) {
     try {
       const bid = await Bids.findByPk(req.params.id);
-      const product = await Products.findOne({
-        where: {
-          id: bid.productId,
-        },
-      });
+      const product = await Products.findByPk(bid.productId);
+      const buyer = await Users.findByPk(bid.buyerId);
 
       if (!bid) {
         return res.status(404).json({
@@ -213,11 +210,11 @@ module.exports = {
       });
 
       const emailData = {
-        buyerName: req.user.name,
+        buyerName: buyer.name,
         bidId: bid.id,
         productName: product.name,
         bidPrice: bid.bidPrice,
-        buyerEmail: req.user.email,
+        buyerEmail: buyer.email,
         subject: 'Penawaran Kamu Sudah Diterima',
         status: 'Diterima',
       };
@@ -238,11 +235,8 @@ module.exports = {
   async handleRejectBids(req, res) {
     try {
       const bid = await Bids.findByPk(req.params.id);
-      const product = await Products.findOne({
-        where: {
-          id: bid.productId,
-        },
-      });
+      const product = await Products.findByPk(bid.productId);
+      const buyer = await Users.findByPk(bid.buyerId);
 
       if (!bid) {
         return res.status(404).json({
@@ -267,11 +261,11 @@ module.exports = {
       });
 
       const emailData = {
-        buyerName: req.user.name,
+        buyerName: buyer.name,
         bidId: bid.id,
         productName: product.name,
         bidPrice: bid.bidPrice,
-        buyerEmail: req.user.email,
+        buyerEmail: buyer.email,
         subject: 'Penawaran Kamu Ditolak',
         status: 'Ditolak',
       };
@@ -292,11 +286,8 @@ module.exports = {
   async handleFinishSale(req, res) {
     try {
       const bid = await Bids.findByPk(req.params.id);
-      const product = await Products.findOne({
-        where: {
-          id: bid.productId,
-        },
-      });
+      const product = await Products.findByPk(bid.productId);
+      const buyer = await Users.findByPk(bid.buyerId);
 
       if (!bid) {
         return res.status(404).json({
@@ -321,11 +312,11 @@ module.exports = {
       });
 
       const emailData = {
-        buyerName: req.user.name,
+        buyerName: buyer.name,
         bidId: bid.id,
         productName: product.name,
         bidPrice: bid.bidPrice,
-        buyerEmail: req.user.email,
+        buyerEmail: buyer.email,
         subject: 'Pembayaran Pesanan Telah Kami Terima',
         status: 'Lunas',
       };

@@ -45,25 +45,6 @@ module.exports = {
   async handleCreateProduct(req, res) {
     try {
       const { name, price, category, description } = req.body;
-      let imageFilename = [];
-      let imageUrls = [];
-
-      await Promise.all(
-        req.files.map(async (e) => {
-          const file = e.buffer;
-          const storageRef = ref(storage, `images/products/${Date.now()}-${e.originalname}`);
-
-          imageFilename.push(`${Date.now()}-${e.originalname}`);
-
-          const metadata = {
-            contentType: e.mimetype,
-          };
-
-          const snapshot = await uploadBytes(storageRef, file, metadata);
-          const url = await getDownloadURL(snapshot.ref);
-          imageUrls.push(url);
-        })
-      );
 
       const rules = Validator.rules;
       const validator = new Validator(
@@ -72,16 +53,22 @@ module.exports = {
           price,
           category,
           description,
-          // files: req.files['filenames'],
+          files: req.files,
         },
         {
           name: [rules.required(), rules.max(255)],
           price: [rules.required(), rules.number(), rules.min(0)],
           category: [rules.required(), rules.max(255)],
           description: [rules.required()],
-          // files: [rules.required(), rules.array(), rules.max(4)],
+          files: [rules.array(), rules.max(4)],
         }
       );
+
+      if (req.files.length == 0) {
+        return res.status(422).json({
+          message: 'Semua Input harus diisi',
+        });
+      }
 
       if (validator.fails()) {
         return res.status(422).json({
@@ -89,6 +76,9 @@ module.exports = {
           errors: validator.getErrors(),
         });
       }
+
+      // Uploading Image to firebase storage
+      const imageUrls = await uploadImageToFirebase(req);
 
       await Products.create({
         name,
@@ -123,20 +113,26 @@ module.exports = {
           price,
           category,
           description,
-          files: req.files['filenames'],
+          files: req.files,
         },
         {
           name: [rules.required(), rules.max(255)],
           price: [rules.required(), rules.number(), rules.min(0)],
           category: [rules.required(), rules.max(255)],
           description: [rules.required()],
-          files: [rules.required(), rules.array(), rules.max(4)],
+          files: [rules.array(), rules.max(4)],
         }
       );
 
       if (product.createdBy != req.user.id) {
         return res.status(403).json({
           message: 'Unauthorized',
+        });
+      }
+
+      if (req.files.length == 0) {
+        return res.status(422).json({
+          message: 'Semua Input harus diisi',
         });
       }
 
@@ -147,22 +143,15 @@ module.exports = {
         });
       }
 
-      // get req.files filename property
-      const filenames = req.files['filenames'].map((e) => e.filename);
-      const files = JSON.stringify(filenames);
-
-      if (filenames.length > 4) {
-        return res.status(422).json({
-          message: 'File maximal 4',
-        });
-      }
+      await deleteImageFromFirebase(product.imageUrls);
+      const imageUrls = await uploadImageToFirebase(req);
 
       await product.update({
         name,
         price,
         category,
         description,
-        filenames: files,
+        imageUrls,
         createdBy: req.user.id,
       });
 
@@ -176,23 +165,39 @@ module.exports = {
       });
     }
   },
+};
 
-  // async handleDelete(req, res) {
-  //   try {
-  //     // Create a reference to the file to delete
-  //     const imageRef = ref(storage, 'images/products/1657277308560-img1.jpeg');
+const uploadImageToFirebase = async (req) => {
+  let imageUrls = [];
 
-  //     // Delete the file
-  //     await deleteObject(imageRef);
+  await Promise.all(
+    req.files.map(async (e) => {
+      const file = e.buffer;
+      const storageRef = ref(storage, `images/products/${Date.now()}-${e.originalname}`);
 
-  //     res.status(200).json({
-  //       message: 'File berhasil dihapus',
-  //     });
-  //   } catch (err) {
-  //     res.status(500).json({
-  //       name: err.name,
-  //       message: err.message,
-  //     });
-  //   }
-  // },
+      const metadata = {
+        contentType: e.mimetype,
+      };
+
+      const snapshot = await uploadBytes(storageRef, file, metadata);
+      const url = await getDownloadURL(snapshot.ref);
+      imageUrls.push(url);
+    })
+  );
+
+  return imageUrls;
+};
+
+const deleteImageFromFirebase = async (imageUrls) => {
+  imageUrls.map(async (imgUrl) => {
+    try {
+      // Create image ref from image url in firebase storage
+      const imageRef = ref(storage, imgUrl);
+
+      // Delete the file
+      await deleteObject(imageRef);
+    } catch (err) {
+      console.warn(err.message);
+    }
+  });
 };
