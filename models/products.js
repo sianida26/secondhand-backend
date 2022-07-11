@@ -1,5 +1,6 @@
 'use strict';
 const { Model } = require('sequelize');
+const sequelize = require('sequelize');
 // const { bid } = require('../controllers/bids');
 const { Users, Bids } = require('./index');
 module.exports = (sequelize, DataTypes) => {
