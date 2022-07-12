@@ -15,15 +15,15 @@ module.exports = {
     })
       .then((createUser) => {
         const token = jwt.sign({ id: createUser.id, name: name, email: email }, JWT_KEY);
-        res.status(201).json({
+        return res.status(201).json({
           name: createUser.name,
           city: createUser.city,
           token: token,
-          profilePhoto: `https://avatars.dicebear.com/api/bottts/${createUser.id}.svg`,
+          profilePhoto: createUser.profilePicUrl,
         });
       })
       .catch((err) => {
-        res.status(422).json({
+        return res.status(422).json({
           message: 'Terdapat data yang tidak sesuai.',
           errors: err.message,
         });
