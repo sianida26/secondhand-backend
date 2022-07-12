@@ -26,7 +26,7 @@ describe("Get Detail Product By Id For Buyer", () => {
     });
 
     afterAll(async () => {
-        await bid.destroy();
+        await bid?.destroy();
         await product.destroy();
         await buyer.destroy();
         await seller.destroy();
@@ -34,7 +34,7 @@ describe("Get Detail Product By Id For Buyer", () => {
 
     it("Should return 404 if product does not exists", async () => {
         const response = await request(app)
-            .post(ENDPOINT_PATH + '/99999')
+            .get(ENDPOINT_PATH + '/99999')
             .send();
 
         expect(response.status).toBe(404);
@@ -43,7 +43,7 @@ describe("Get Detail Product By Id For Buyer", () => {
 
     it("Should return 403 if requesting his own product", async () => {
         const response = await request(app)
-            .post(`${ ENDPOINT_PATH }/${ product.id }`)
+            .get(`${ ENDPOINT_PATH }/${ product.id }`)
             .set('Authorization', `Bearer ${ seller.accessToken }`)
             .send();
 
@@ -53,7 +53,7 @@ describe("Get Detail Product By Id For Buyer", () => {
 
     it("Should return status \"BIDDABLE\" if product is available", async () => {
         const response = await request(app)
-            .post(`${ ENDPOINT_PATH }/${ product.id }`)
+            .get(`${ ENDPOINT_PATH }/${ product.id }`)
             .set('Authorization', `Bearer ${ buyer.accessToken }`)
             .send();
         
@@ -63,7 +63,7 @@ describe("Get Detail Product By Id For Buyer", () => {
 
     it("Should return status \"BIDDABLE\" if not logged in", async () => {
         const response = await request(app)
-            .post(`${ ENDPOINT_PATH }/${ product.id }`)
+            .get(`${ ENDPOINT_PATH }/${ product.id }`)
             .send();
         
         expect(response.status).toBe(200);
@@ -78,7 +78,7 @@ describe("Get Detail Product By Id For Buyer", () => {
         });
 
         const response = await request(app)
-            .post(`${ ENDPOINT_PATH }/${ product.id }`)
+            .get(`${ ENDPOINT_PATH }/${ product.id }`)
             .set('Authorization', `Bearer ${ buyer.accessToken }`)
             .send();
         
@@ -95,7 +95,7 @@ describe("Get Detail Product By Id For Buyer", () => {
         });
 
         const response = await request(app)
-            .post(`${ ENDPOINT_PATH }/${ product.id }`)
+            .get(`${ ENDPOINT_PATH }/${ product.id }`)
             .set('Authorization', `Bearer ${ buyer.accessToken }`)
             .send();
         
@@ -112,7 +112,7 @@ describe("Get Detail Product By Id For Buyer", () => {
         });
 
         const response = await request(app)
-            .post(`${ ENDPOINT_PATH }/${ product.id }`)
+            .get(`${ ENDPOINT_PATH }/${ product.id }`)
             .set('Authorization', `Bearer ${ buyer.accessToken }`)
             .send();
         
@@ -129,7 +129,7 @@ describe("Get Detail Product By Id For Buyer", () => {
         });
 
         const response = await request(app)
-            .post(`${ ENDPOINT_PATH }/${ product.id }`)
+            .get(`${ ENDPOINT_PATH }/${ product.id }`)
             .send();
         
         expect(response.status).toBe(404);
