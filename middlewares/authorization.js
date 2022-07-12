@@ -15,7 +15,9 @@ module.exports = {
       }
 
       const tokenPayLoad = jwt.verify(token, JWT_KEY);
-      req.user = await Users.findByPk(tokenPayLoad.id);
+      const user = await Users.findByPk(tokenPayLoad.id);
+      req.user = user;
+      req.isLoggedIn = !!user;
 
       next();
     } catch (err) {
@@ -35,8 +37,9 @@ module.exports = {
     }
 
     const tokenPayLoad = jwt.verify(token, JWT_KEY);
-    req.user = await Users.findByPk(tokenPayLoad.id);
-
+    const user = await Users.findByPk(tokenPayLoad.id);
+    req.user = user;
+    req.isLoggedIn = !!user;
     next();
   }
 };
