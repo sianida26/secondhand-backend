@@ -36,6 +36,15 @@ module.exports = (sequelize, DataTypes) => {
         get(){
           return jwt.sign({ id: this.id, name: this.name, email: this.email }, JWT_KEY)
         }
+      },
+      profilePicUrl: {
+        type: DataTypes.VIRTUAL,
+        get(){
+          return this.image ? productId.users.image : `https://avatars.dicebear.com/api/bottts/${productId.users.id}.svg`
+        },
+        set(value){
+          this.setDataValue('image', value);
+        }
       }
     },
     {
