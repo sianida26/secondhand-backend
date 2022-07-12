@@ -40,7 +40,7 @@ module.exports = (sequelize, DataTypes) => {
       profilePicUrl: {
         type: DataTypes.VIRTUAL,
         get(){
-          return this.image ? productId.users.image : `https://avatars.dicebear.com/api/bottts/${productId.users.id}.svg`
+          return this.image ? this.image : `https://avatars.dicebear.com/api/bottts/${this.id}.svg`
         },
         set(value){
           this.setDataValue('image', value);
