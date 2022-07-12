@@ -1,56 +1,67 @@
-// TODO: buat variabel dimasing-masing table berdasarkan data bid buyer
-const emailContentAcceptBids = () => {
+const emailContentAcceptBids = (buyer, noPesanan, productName, bidPrice, status) => {
   return ` 
-  Halo buyer 
-  <br>
-  <br>
-  <strong>Rincian penawaran</strong>
   <head>
     <style>
-        body {
+      body {
         font-family: helvetica;
-        }
-        table {
+      }
+      table {
         margin-top: 5px;
         border-top: 2px solid black;
-        }
-        table, th, td {
+        width: 100%;
+      }
+
+      table,
+      th,
+      td {
         border-collapse: collapse;
         text-align: left
-        }
-        th, td {
+      }
+
+      th,
+      td {
         border-bottom: 1px solid #adadad;
         padding: 15px 5px;
-        }
-        th {
-        width: 190px;
+      }
+
+      th {
+        width: 30%;
         background-color: #f9f9f9;
         font-weight: 400;
-        }
-        td {
-        width: 60%;
+      }
+
+      td {
+        width: 70%;
         border-left: 1px solid #adadad;
-        }
+      }
     </style>
   </head>
-  <table>
-    <tr>
-      <th>Nomor Pesanan</th>
-      <td>Person 2</td>
-    </tr>
-    <tr>
-      <th>Produk</th>
-      <td>Person 2</td>
-    </tr>
-    <tr>
-      <th>Harga Penawaran</th>
-      <td>Person 2</td>
-    </tr>
-    <tr>
-      <th>Status</th>
-      <td>Diterima</td>
-    </tr>
-  </table>
+  <body>
+    Halo <strong>${buyer}</strong> <br><br>
+
+    Terima kasih atas kepercayaan kamu bertransaksi di secondhand. Berikut adalah rincian informasi penawaran <br><br><br>
+
+    <strong>Ringkasan Penawaran</strong>
+
+    <table>
+      <tr>
+        <th>Nomor Pesanan</th>
+        <td>${noPesanan}</td>
+      </tr>
+      <tr>
+        <th>Produk</th>
+        <td>${productName}</td>
+      </tr>
+      <tr>
+        <th>Harga Penawaran</th>
+        <td>${bidPrice}</td>
+      </tr>
+      <tr>
+        <th>Status</th>
+        <td>${status}</td>
+      </tr>
+    </table>
+  </body>
   `;
 };
 
