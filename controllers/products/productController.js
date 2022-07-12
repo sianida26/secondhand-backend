@@ -47,6 +47,59 @@ module.exports = {
     }
   },
 
+  async handleGetProductByIdForBuyer(req, res) {
+    try {
+      const product = await Products.findOne({ where: { id: req.params.id }, include: ['users'] });
+      
+      //return 404 if not found
+      if (!product) return res.status(404).json({ message: `Produk dengan id ${ req.params.id } tidak ditemukan` });
+
+      //return 403 if requesting his own product
+      if (product.users.id === req.user?.id) return res.status(403).json({ message: `Anda tidak dapat memesan produk anda sendiri` });
+
+      const productBids = await product.getBids();
+      const isBiddable = await product.isBiddable();
+      
+      let bidStatus = "BIDDABLE";
+      //if logged in
+      if (req.isLoggedIn){
+        const buyerBid = productBids.find(bid => bid.buyerId === req.user.id)
+        //return this product status if bid available
+        if (buyerBid){
+          bidStatus = buyerBid.soldAt ? "TRANSACTION_COMPLETED"
+            : buyerBid.declinedAt ? "TRANSACTION_DECLINED"
+            : buyerBid.acceptedAt ? "TRANSACTION_ACCEPTED"
+            : "WAITING_CONFIRMATION"
+        }
+        //return 404 if product is not biddable (either any other bids accepter or completed) 
+        else if (!isBiddable) return res.status(404).json({ message: `Produk dengan id ${ req.params.id } tidak tersedia.` });
+      } else {
+        //return 404 if product is not biddable (either any other bids accepter or completed) 
+        if (!isBiddable) return res.status(404).json({ message: `Produk dengan id ${ req.params.id } tidak tersedia.` });
+      }
+
+      res.status(200).json({
+        id: product.id,
+        name: product.name,
+        images: product.imageUrls,
+        category: product.category,
+        description: product.description,
+        seller: {
+          name: product.users.name,
+          city: product.users.city,
+          profilePicture: product.users.profilePicUrl,
+        },
+        price: product.price,
+        status: bidStatus,
+      });
+    } catch (err) {
+      res.status(500).json({
+        message: `Terjadi kesalahan pada server`,
+        errors: err.message,
+      });
+    }
+  },
+
   async handleListMyProducts(req, res) {
     try {
       const userId = req.user;
