@@ -17,7 +17,6 @@ module.exports = {
         const token = jwt.sign({ id: createUser.id, name: name, email: email }, JWT_KEY);
         return res.status(201).json({
           name: createUser.name,
-          city: createUser.city,
           token: token,
           profilePhoto: createUser.profilePicUrl,
         });
