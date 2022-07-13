@@ -4,7 +4,7 @@ const { Users } = require('../../models');
 
 function generateString(length) {
   let result = '';
-  const characters ='ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+  const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
   const charactersLength = characters.length;
   for (let i = 0; i < length; i++) {
     result += characters.charAt(Math.floor(Math.random() * charactersLength));
@@ -22,7 +22,7 @@ describe('POST /users/register', () => {
       name: "test"
     }
 
-    const response = await request(app)
+    await request(app)
       .post('/users/register')
       .set('Accept', 'application/json')
       .send(registerData);
@@ -48,8 +48,9 @@ describe('POST /users/register', () => {
         expect(res.statusCode).toBe(201);
         expect(res.body).toEqual(
           expect.objectContaining({
-            name: res.body.name,
-            token: expect.any(String)
+            name: expect.any(String),
+            token: expect.any(String),
+            profilePhoto: expect.any(String)
           })
         );
       });
@@ -150,24 +151,28 @@ describe('POST /users/register', () => {
       });
   });
 
-  it('should response with 429 as status code and return too many request', async () => {
-    for (let i = 0; i < 10; i++) {
-      let randomName = generateString(6);
-      let email = `${randomName}@gmail.com`;
-      let password = "12345";
-      let name = randomName;
+  // it('should response with 429 as status code and return too many request', async () => {
+  //   for (let i = 0; i < 10; i++) {
+  //     let randomName = generateString(6);
+  //     let email = `${randomName}@gmail.com`;
+  //     let password = "12345";
+  //     let name = randomName;
 
-      var response = await request(app)
-        .post('/users/register')
-        .set('Content-Type', 'application/json')
-        .send({ email, password, name })
-    }
+  //     var response = await request(app)
+  //       .post('/users/register')
+  //       .set('Content-Type', 'application/json')
+  //       .send({ email, password, name });
 
-    expect(response.statusCode).toBe(429)
-    expect(response.body).toEqual(
-      expect.objectContaining({
-        message: expect.any(String)
-      })
-    )
-  });
+  //     // usersEmail.push(email);
+  //     // usersTest.push(await Users.findOne({ where: { email: email} }));
+  //     await Users.destroy({ where: { email } });
+  //   }
+
+  //   expect(response.statusCode).toBe(429)
+  //   expect(response.body).toEqual(
+  //     expect.objectContaining({
+  //       message: expect.any(String)
+  //     })
+  //   )
+  // });
 });
