@@ -21,7 +21,7 @@ module.exports = {
         include: ['bids'],
       });
 
-      let productAcc = productsCheck.bids.find((bid) => bid.acceptedAt);
+      let productAcc = productsCheck.bids.find((bid) => bid.acceptedAt || bid.declinedAt);
 
       res.status(200).json({
         id: bidHistory.id,
