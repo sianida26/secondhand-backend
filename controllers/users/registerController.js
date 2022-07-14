@@ -19,7 +19,7 @@ module.exports = {
           name: createUser.name,
           city: createUser.city,
           token: token,
-          profilePhoto: `https://avatars.dicebear.com/api/bottts/${createUser.id}.svg`,
+          profilePhoto: createUser.profilePicUrl,
         });
       })
       .catch((err) => {
