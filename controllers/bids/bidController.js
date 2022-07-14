@@ -21,7 +21,7 @@ module.exports = {
         include: ['bids'],
       });
 
-      let productAcc = productsCheck.bids.find((bid) => bid.acceptedAt || bid.declinedAt);
+      let productAcc = productsCheck.bids.find((bid) => bid.acceptedAt);
 
       res.status(200).json({
         id: bidHistory.id,
@@ -37,7 +37,7 @@ module.exports = {
         acceptedAt: bidHistory.acceptedAt,
         declinedAt: bidHistory.declinedAt,
         soldAt: bidHistory.soldAt,
-        isAcceptable: !productAcc,
+        isAcceptable: !productAcc || !!bidHistory.declinedAt,
       });
     } catch (err) {
       res.status(404).json({
