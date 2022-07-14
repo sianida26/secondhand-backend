@@ -321,7 +321,7 @@ module.exports = {
         status: 'Lunas',
       };
 
-      sendEmailToBuyer(emailData.buyerName, emailData.bidId, emailData.productName, emailData.bidPrice, emailData.buyerEmail, emailData.subject, emailData.status);
+      sendEmail.sendEmailToBuyer(emailData.buyerName, emailData.bidId, emailData.productName, emailData.bidPrice, emailData.buyerEmail, emailData.subject, emailData.status);
 
       return res.status(200).json({
         message: 'OK',
