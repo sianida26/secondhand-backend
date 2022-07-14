@@ -37,7 +37,7 @@ module.exports = {
         acceptedAt: bidHistory.acceptedAt,
         declinedAt: bidHistory.declinedAt,
         soldAt: bidHistory.soldAt,
-        isAcceptable: !productAcc || !!bidHistory.declinedAt,
+        isAcceptable: !(productAcc || bidHistory.declinedAt),
       });
     } catch (err) {
       res.status(404).json({
