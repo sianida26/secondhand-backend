@@ -28,6 +28,7 @@ module.exports = {
         buyerName: bidHistory.users.name,
         buyerCity: bidHistory.users.city,
         buyerPhone: bidHistory.users.phone,
+        buyerPic: bidHistory.users.profilePicUrl,
         productName: bidHistory.products.name,
         productImage: bidHistory.products.imageUrls,
         productPrice: bidHistory.products.price,
