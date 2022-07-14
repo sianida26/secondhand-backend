@@ -29,7 +29,7 @@ module.exports = {
         buyerCity: bidHistory.users.city,
         buyerPhone: bidHistory.users.phone,
         productName: bidHistory.products.name,
-        productImage: JSON.parse(bidHistory.products.filenames).map((image) => `https://secondhand-backend-kita.herokuapp.com/images/products/${image}`)[0],
+        productImage: bidHistory.products.imageUrls,
         productPrice: bidHistory.products.price,
         bidPrice: bidHistory.bidPrice,
         bidAt: bidHistory.createdAt,
@@ -73,13 +73,12 @@ module.exports = {
       let notif = [];
 
       myProducts.rows.map((product) => {
-        let images = product.filenames ? JSON.parse(product.filenames).map((image) => `https://secondhand-backend-kita.herokuapp.com/images/products/${image}`)[0] : '';
 
         notif.push({
           id: 0,
           productName: product.name,
           price: product.price,
-          image: images,
+          image: product.imageUrls,
           type: 'Berhasil diterbitkan',
           time: product.updatedAt,
         });
@@ -91,7 +90,7 @@ module.exports = {
                 id: 0,
                 productName: product.name,
                 price: product.price,
-                image: images,
+                image: product.imageUrls,
                 type: 'Penawaran produk',
                 bidPrice: bid.bidPrice,
                 time: bid.createdAt,
@@ -103,7 +102,7 @@ module.exports = {
                 id: 0,
                 productName: product.name,
                 price: product.price,
-                image: images,
+                image: product.imageUrls,
                 type: 'Penawaran ditolak',
                 bidPrice: bid.bidPrice,
                 time: bid.declinedAt,
@@ -115,7 +114,7 @@ module.exports = {
                 id: 0,
                 productName: product.name,
                 price: product.price,
-                image: images,
+                image: product.imageUrls,
                 type: 'Berhasil terjual',
                 bidPrice: bid.bidPrice,
                 time: bid.soldAt,
@@ -126,13 +125,12 @@ module.exports = {
       });
 
       myBids.rows.map((bid) => {
-        let images = bid.products.filenames ? JSON.parse(bid.products.filenames).map((image) => `https://secondhand-backend-kita.herokuapp.com/images/products/${image}`)[0] : '';
 
         notif.push({
           id: 0,
           productName: bid.products.name,
           price: bid.products.price,
-          image: images,
+          image: bid.products.imageUrls,
           type: 'Penawaran produk',
           bidPrice: bid.bidPrice,
           time: bid.createdAt,
@@ -143,7 +141,7 @@ module.exports = {
             id: 0,
             productName: bid.products.name,
             price: bid.products.price,
-            image: images,
+            image: bidProducts.imageUrls,
             type: 'Penawaran diterima',
             bidPrice: bid.bidPrice,
             time: bid.acceptedAt,
@@ -155,7 +153,7 @@ module.exports = {
             id: 0,
             productName: bid.products.name,
             price: bid.products.price,
-            image: images,
+            image: bid.products.imageUrls,
             type: 'Penawaran ditolak',
             bidPrice: bid.bidPrice,
             time: bid.declinedAt,

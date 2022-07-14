@@ -213,7 +213,7 @@ module.exports = {
         .map((product) => ({
           id: product.id,
           category: product.category,
-          image: JSON.parse(product.filenames),
+          image: product.imageUrls,
           price: product.price,
         }))
     );
