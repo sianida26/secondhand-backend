@@ -122,14 +122,13 @@ module.exports = {
 
       myProducts.rows.sort((a, b) => new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime());
       myProducts.rows.map((product) => {
-        let images = product.filenames ? JSON.parse(product.filenames).map((image) => `https://secondhand-backend-kita.herokuapp.com/images/products/${image}`)[0] : '';
 
         products.push({
           id: product.id,
           name: product.name,
           price: product.price,
           category: product.category,
-          image: images,
+          image: product.imageUrls,
         });
 
         if (product.bids != '') {
@@ -140,7 +139,7 @@ module.exports = {
                 name: product.name,
                 price: product.price,
                 category: product.category,
-                image: images,
+                image: product.imageUrls,
                 buyerName: bid.users.name,
                 bidPrice: bid.bidPrice,
                 bidTimestamp: bid.createdAt,
@@ -153,7 +152,7 @@ module.exports = {
                 name: product.name,
                 price: product.price,
                 category: product.category,
-                image: images,
+                image: product.imageUrls,
                 buyerName: bid.users.name,
                 bidPrice: bid.bidPrice,
                 bidTimestamp: bid.createdAt,
