@@ -16,7 +16,7 @@ const fileFilter = (req, file, cb) => {
 };
 
 const upload = multer({ fileFilter: fileFilter });
-const cpUpload = upload.array('filenames', 5);
+const cpUpload = upload.array('files', 5);
 
 router.get('/', function (req, res) {
   res.send('Products');
