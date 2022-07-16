@@ -140,7 +140,7 @@ const emailContentAcceptBids = (buyer, seller, noPesanan, productName, bidPrice,
                   </td>
                   <td align="right">
                     <p style="font-size: 12px;
-                    color: rgba(49, 53, 59, 0.68);">Status</p>
+                    color: rgba(49, 53, 59, 0.68);">Status Pembayaran</p>
                   </td>
                 </tr>
 
@@ -189,11 +189,13 @@ const emailContentAcceptBids = (buyer, seller, noPesanan, productName, bidPrice,
                 </tr>
               </table>
 
+              <!-- <hr style="margin: 15px 0 25px 0;"> -->
+
               <table id="total-pay-table" role="presentation" style="margin: 25px 0 0 0;">
                 <tr>
                   <td align="left">
                     <p style="font-size: 14px;
-                    font-weight: bold;">Total</p>
+                    font-weight: bold;">Total Bayar</p>
                   </td>
 
                   <td align="right">
