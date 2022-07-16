@@ -67,6 +67,9 @@ module.exports = {
       if (req.files.length == 0) {
         return res.status(422).json({
           message: 'Semua Input harus diisi',
+          errors: {
+            files: 'Harus menyertakan setidaknya 1 gambar!',
+          },
         });
       }
 
@@ -78,7 +81,9 @@ module.exports = {
       }
 
       // Uploading Image to firebase storage
+      console.log('waktunya upload');
       const imageUrls = await uploadImageToFirebase(req);
+      console.log('sudah selesai upload');
 
       await Products.create({
         name,
@@ -173,7 +178,8 @@ const uploadImageToFirebase = async (req) => {
     let imageUrls = [];
 
     await Promise.all(
-      req.files.map(async (e) => {
+      req.files.map(async (e, i) => {
+        console.log('Upload file yang ke ', i);
         const file = e.buffer;
         const storageRef = ref(storage, `images/products/${Date.now()}-${e.originalname}`);
 
@@ -181,22 +187,17 @@ const uploadImageToFirebase = async (req) => {
           contentType: e.mimetype,
         };
 
+        console.log('Upload bytes yang ke ', i);
         const snapshot = await uploadBytes(storageRef, file, metadata);
+        console.log('GetDownloadURL yang ke ', i);
         const url = await getDownloadURL(snapshot.ref);
+        console.log('selesai GetDownloadURL yang ke ', i);
         imageUrls.push(url);
       })
     );
 
     return imageUrls;
   } catch (err) {
-    // switch (err.code) {
-    //   case "storage/retry-limit-exceeded":
-
-    //     break;
-
-    //   default:
-    //     break;
-    // }
     console.warn(err.message);
   }
 };

@@ -23,24 +23,73 @@ module.exports = {
   async handleGetProductById(req, res) {
     try {
       const productId = await Products.findOne({ where: { id: req.params.id }, include: ['users'] });
-      const profilePhoto = productId.users.image ? `https://secondhand-backend-kita.herokuapp.com/images/profile/${productId.users.image}` : `https://avatars.dicebear.com/api/bottts/${productId.users.id}.svg`;
 
       res.status(200).json({
         id: productId.id,
         name: productId.name,
-        images: productId.filenames ? JSON.parse(productId.filenames).map((image) => `https://secondhand-backend-kita.herokuapp.com/images/products/${image}`) : [],
+        images: productId.imageUrls,
         category: productId.category,
         description: productId.description,
         seller: {
           name: productId.users.name,
           city: productId.users.city,
-          profilePicture: profilePhoto,
+          profilePicture: productId.users.profilePicUrl,
         },
         price: productId.price,
       });
     } catch (err) {
       res.status(404).json({
         message: `Product with id ${req.params.id} not found`,
+        errors: err.message,
+      });
+    }
+  },
+
+  async handleGetProductByIdForBuyer(req, res) {
+    try {
+      const product = await Products.findOne({ where: { id: req.params.id }, include: ['users'] });
+
+      //return 404 if not found
+      if (!product) return res.status(404).json({ message: `Produk dengan id ${req.params.id} tidak ditemukan` });
+
+      //return 403 if requesting his own product
+      if (product.users.id === req.user?.id) return res.status(403).json({ message: `Anda tidak dapat memesan produk anda sendiri` });
+
+      const productBids = await product.getBids();
+      const isBiddable = await product.isBiddable();
+
+      let bidStatus = 'BIDDABLE';
+      //if logged in
+      if (req.isLoggedIn) {
+        const buyerBid = productBids.find((bid) => bid.buyerId === req.user.id);
+        //return this product status if bid available
+        if (buyerBid) {
+          bidStatus = buyerBid.soldAt ? 'TRANSACTION_COMPLETED' : buyerBid.declinedAt ? 'TRANSACTION_DECLINED' : buyerBid.acceptedAt ? 'TRANSACTION_ACCEPTED' : 'WAITING_CONFIRMATION';
+        }
+        //return 404 if product is not biddable (either any other bids accepter or completed)
+        else if (!isBiddable) return res.status(404).json({ message: `Produk dengan id ${req.params.id} tidak tersedia.` });
+      } else {
+        //return 404 if product is not biddable (either any other bids accepter or completed)
+        if (!isBiddable) return res.status(404).json({ message: `Produk dengan id ${req.params.id} tidak tersedia.` });
+      }
+
+      res.status(200).json({
+        id: product.id,
+        name: product.name,
+        images: product.imageUrls,
+        category: product.category,
+        description: product.description,
+        seller: {
+          name: product.users.name,
+          city: product.users.city,
+          profilePicture: product.users.profilePicUrl,
+        },
+        price: product.price,
+        status: bidStatus,
+      });
+    } catch (err) {
+      res.status(500).json({
+        message: `Terjadi kesalahan pada server`,
         errors: err.message,
       });
     }
@@ -68,14 +117,12 @@ module.exports = {
 
       myProducts.rows.sort((a, b) => new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime());
       myProducts.rows.map((product) => {
-        let images = product.filenames ? JSON.parse(product.filenames).map((image) => `https://secondhand-backend-kita.herokuapp.com/images/products/${image}`)[0] : '';
-
         products.push({
           id: product.id,
           name: product.name,
           price: product.price,
           category: product.category,
-          image: images,
+          image: product.imageUrls,
         });
 
         if (product.bids != '') {
@@ -86,7 +133,7 @@ module.exports = {
                 name: product.name,
                 price: product.price,
                 category: product.category,
-                image: images,
+                image: product.imageUrls,
                 buyerName: bid.users.name,
                 bidPrice: bid.bidPrice,
                 bidTimestamp: bid.createdAt,
@@ -99,7 +146,7 @@ module.exports = {
                 name: product.name,
                 price: product.price,
                 category: product.category,
-                image: images,
+                image: product.imageUrls,
                 buyerName: bid.users.name,
                 bidPrice: bid.bidPrice,
                 bidTimestamp: bid.createdAt,
@@ -150,7 +197,7 @@ module.exports = {
         .map((product) => ({
           id: product.id,
           category: product.category,
-          image: JSON.parse(product.filenames),
+          image: product.imageUrls,
           price: product.price,
         }))
     );

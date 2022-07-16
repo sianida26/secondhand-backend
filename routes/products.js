@@ -16,7 +16,7 @@ const fileFilter = (req, file, cb) => {
 };
 
 const upload = multer({ fileFilter: fileFilter });
-const cpUpload = upload.array('filenames', 5);
+const cpUpload = upload.array('files', 5);
 
 router.get('/', function (req, res) {
   res.send('Products');
@@ -29,7 +29,7 @@ router.post('/', [middlewares.authorization.authorize, cpUpload], products.handl
 router.get('/available', middlewares.authorization.optionalAuth, products.product.getAvailableProducts);
 router.put('/:id', [middlewares.authorization.authorize, cpUpload], products.handleEditProductById);
 router.get('/all', middlewares.authorization.authorize, products.product.handleGetAllProducts);
-router.get('/detail-buyer/:id', middlewares.authorization.optionalAuth, products.product.handleGetProductById);
+router.get('/detail-buyer/:id', middlewares.authorization.optionalAuth, products.product.handleGetProductByIdForBuyer);
 router.get('/detail/:id', products.product.handleGetProductById);
 router.get('/history/:id', middlewares.authorization.authorize, bids.bid.handleBidHistory);
 router.get('/my-products', middlewares.authorization.authorize, products.product.handleListMyProducts);

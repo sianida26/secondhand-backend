@@ -25,17 +25,10 @@ const handleLogin = async (req, res) => {
 
     const accessToken = createToken(user);
 
-    let profilePhoto = user.image;
-    if (profilePhoto === null) {
-      profilePhoto = `https://avatars.dicebear.com/api/bottts/${user.id}.svg`;
-    } else {
-      profilePhoto = `https://secondhand-backend-kita.herokuapp.com/images/profile/${user.image}`;
-    }
-
     res.status(200).json({
       name: user.name,
       city: user.city,
-      profilePhoto,
+      profilePhoto: user.profilePicUrl,
       token: accessToken,
     });
   } catch (err) {
