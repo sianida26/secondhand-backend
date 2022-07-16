@@ -1,16 +1,26 @@
 require('dotenv').config();
 const nodemailer = require('nodemailer');
 const emailContentAcceptBids = require('../utils/emailContentAcceptBid');
+const emailContentRejectBids = require('../utils/emailContentRejectBid');
+const emailContentInvoice = require('../utils/emailContentInvoice');
 const emailContentForgotPassword = require('../utils/emailContentForgotPassword');
 
 const { SMTP_HOST, SMTP_PORT, SMTP_USERNAME, SMTP_PASSWORD } = process.env;
 
-function sendEmailToBuyer(buyerName, bidId, productName, bidPrice, buyerEmail, subject, status) {
-  sendEmail(buyerEmail, subject, emailContentAcceptBids(buyerName, bidId, productName, bidPrice, status));
+function sendAcceptBidToBuyer(buyerName, sellerName, bidId, productName, bidPrice, buyerEmail, subject, status, datetime) {
+  sendEmail(buyerEmail, subject, emailContentAcceptBids(buyerName, sellerName, bidId, productName, bidPrice, status, datetime));
+}
+
+function sendRejectBidToBuyer(buyerName, sellerName, bidId, productName, bidPrice, buyerEmail, subject, status, datetime) {
+  sendEmail(buyerEmail, subject, emailContentRejectBids(buyerName, sellerName, bidId, productName, bidPrice, status, datetime));
+}
+
+function sendInvoiceToBuyer(buyerName, sellerName, bidId, productName, bidPrice, buyerEmail, subject, status, datetime) {
+  sendEmail(buyerEmail, subject, emailContentInvoice(buyerName, sellerName, bidId, productName, bidPrice, status, datetime));
 }
 
 function sendEmailToUserForgotPassword(email, token) {
-  const subject = "SecondHand Reset Password";
+  const subject = 'SecondHand Reset Password';
   sendEmail(email, subject, emailContentForgotPassword(token));
 }
 
@@ -40,6 +50,8 @@ async function sendEmail(to, subject, content) {
 }
 
 module.exports = {
-  sendEmailToBuyer,
-  sendEmailToUserForgotPassword
+  sendAcceptBidToBuyer,
+  sendRejectBidToBuyer,
+  sendInvoiceToBuyer,
+  sendEmailToUserForgotPassword,
 };
