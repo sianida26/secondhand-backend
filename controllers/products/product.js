@@ -143,6 +143,7 @@ module.exports = {
         });
       }
 
+      // Delete and upload new image urls
       await deleteImageFromFirebase(product.imageUrls);
       const imageUrls = await uploadImageToFirebase(req);
 
@@ -168,36 +169,48 @@ module.exports = {
 };
 
 const uploadImageToFirebase = async (req) => {
-  let imageUrls = [];
+  try {
+    let imageUrls = [];
 
-  await Promise.all(
-    req.files.map(async (e) => {
-      const file = e.buffer;
-      const storageRef = ref(storage, `images/products/${Date.now()}-${e.originalname}`);
+    await Promise.all(
+      req.files.map(async (e) => {
+        const file = e.buffer;
+        const storageRef = ref(storage, `images/products/${Date.now()}-${e.originalname}`);
 
-      const metadata = {
-        contentType: e.mimetype,
-      };
+        const metadata = {
+          contentType: e.mimetype,
+        };
 
-      const snapshot = await uploadBytes(storageRef, file, metadata);
-      const url = await getDownloadURL(snapshot.ref);
-      imageUrls.push(url);
-    })
-  );
+        const snapshot = await uploadBytes(storageRef, file, metadata);
+        const url = await getDownloadURL(snapshot.ref);
+        imageUrls.push(url);
+      })
+    );
 
-  return imageUrls;
+    return imageUrls;
+  } catch (err) {
+    // switch (err.code) {
+    //   case "storage/retry-limit-exceeded":
+
+    //     break;
+
+    //   default:
+    //     break;
+    // }
+    console.warn(err.message);
+  }
 };
 
 const deleteImageFromFirebase = async (imageUrls) => {
-  imageUrls.map(async (imgUrl) => {
-    try {
+  try {
+    imageUrls.map(async (imgUrl) => {
       // Create image ref from image url in firebase storage
       const imageRef = ref(storage, imgUrl);
 
       // Delete the file
       await deleteObject(imageRef);
-    } catch (err) {
-      console.warn(err.message);
-    }
-  });
+    });
+  } catch (err) {
+    console.warn(err.message);
+  }
 };

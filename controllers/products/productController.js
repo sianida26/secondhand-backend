@@ -23,8 +23,7 @@ module.exports = {
   async handleGetProductById(req, res) {
     try {
       const productId = await Products.findOne({ where: { id: req.params.id }, include: ['users'] });
-      const profilePhoto = productId.users.image ? `https://secondhand-backend-kita.herokuapp.com/images/profile/${productId.users.image}` 
-        : `https://avatars.dicebear.com/api/bottts/${productId.users.id}.svg`;
+      const profilePhoto = productId.users.image ? `https://secondhand-backend-kita.herokuapp.com/images/profile/${productId.users.image}` : `https://avatars.dicebear.com/api/bottts/${productId.users.id}.svg`;
 
       res.status(200).json({
         id: productId.id,
@@ -35,7 +34,7 @@ module.exports = {
         seller: {
           name: productId.users.name,
           city: productId.users.city,
-          profilePicture: profilePhoto
+          profilePicture: profilePhoto,
         },
         price: productId.price,
       });
@@ -128,17 +127,7 @@ module.exports = {
     const product = await Products.findByPk(req.params.id);
 
     // Delete image from firebase storage
-    product.imageUrls.map(async (imgUrl) => {
-      try {
-        // Create image ref from image url in firebase storage
-        const imageRef = ref(storage, imgUrl);
-
-        // Delete the file
-        await deleteObject(imageRef);
-      } catch (err) {
-        console.warn(err.message);
-      }
-    });
+    deleteImageFromFirebase(product.imageUrls);
 
     //Return 404 if not found
     if (!product) return res.status(404).json({ message: 'Produk tidak ditemukan.' });
@@ -166,4 +155,18 @@ module.exports = {
         }))
     );
   },
+};
+
+const deleteImageFromFirebase = async (imageUrls) => {
+  try {
+    imageUrls.map(async (imgUrl) => {
+      // Create image ref from image url in firebase storage
+      const imageRef = ref(storage, imgUrl);
+
+      // Delete the file
+      await deleteObject(imageRef);
+    });
+  } catch (err) {
+    console.warn(err.message);
+  }
 };

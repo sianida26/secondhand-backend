@@ -14,11 +14,11 @@ module.exports = (sequelize, DataTypes) => {
       // define association here
       Users.hasMany(models.Products, {
         foreignKey: 'createdBy',
-        as: 'products'
+        as: 'products',
       });
       Users.hasMany(models.Bids, {
         foreignKey: 'buyerId',
-        as: 'bids'
+        as: 'bids',
       });
     }
   }
@@ -33,10 +33,10 @@ module.exports = (sequelize, DataTypes) => {
       image: DataTypes.TEXT,
       accessToken: {
         type: DataTypes.VIRTUAL,
-        get(){
-          return jwt.sign({ id: this.id, name: this.name, email: this.email }, JWT_KEY)
-        }
-      }
+        get() {
+          return jwt.sign({ id: this.id, name: this.name, email: this.email }, JWT_KEY);
+        },
+      },
     },
     {
       sequelize,
