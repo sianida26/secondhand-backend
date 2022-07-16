@@ -23,7 +23,7 @@ module.exports = {
 
       let productAcc = productsCheck.bids.find((bid) => bid.acceptedAt);
 
-      res.status(200).json({
+      return res.status(200).json({
         id: bidHistory.id,
         buyerName: bidHistory.users.name,
         buyerCity: bidHistory.users.city,
@@ -40,7 +40,7 @@ module.exports = {
         isAcceptable: !(productAcc || bidHistory.declinedAt),
       });
     } catch (err) {
-      res.status(404).json({
+      return res.status(404).json({
         message: `Product with id ${req.params.id} not found`,
         errors: err.message,
       });
@@ -167,7 +167,7 @@ module.exports = {
       //   notif = notif.slice(0, 10);
       // }
 
-      res.status(200).json({
+      return res.status(200).json({
         data: notif,
       });
     } catch (err) {

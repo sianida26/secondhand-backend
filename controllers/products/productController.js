@@ -8,12 +8,12 @@ module.exports = {
   async handleGetAllProducts(req, res) {
     try {
       const products = await Products.findAndCountAll({ include: ['users'] });
-      res.status(200).json({
+      return res.status(200).json({
         data: products.rows,
         count: products.count,
       });
     } catch (err) {
-      res.status(400).json({
+      return res.status(400).json({
         message: 'Failed',
         errors: err.message,
       });
@@ -24,7 +24,7 @@ module.exports = {
     try {
       const productId = await Products.findOne({ where: { id: req.params.id }, include: ['users'] });
 
-      res.status(200).json({
+      return res.status(200).json({
         id: productId.id,
         name: productId.name,
         images: productId.imageUrls,
@@ -38,7 +38,7 @@ module.exports = {
         price: productId.price,
       });
     } catch (err) {
-      res.status(404).json({
+      return res.status(404).json({
         message: `Product with id ${req.params.id} not found`,
         errors: err.message,
       });
@@ -73,7 +73,7 @@ module.exports = {
         if (!isBiddable) return res.status(404).json({ message: `Produk dengan id ${req.params.id} tidak tersedia.` });
       }
 
-      res.status(200).json({
+      return res.status(200).json({
         id: product.id,
         name: product.name,
         images: product.imageUrls,
@@ -88,7 +88,7 @@ module.exports = {
         status: bidStatus,
       });
     } catch (err) {
-      res.status(500).json({
+      return res.status(500).json({
         message: `Terjadi kesalahan pada server`,
         errors: err.message,
       });
@@ -156,14 +156,15 @@ module.exports = {
           });
         }
       });
-      res.status(200).json({
+
+      return res.status(200).json({
         products: products,
         diminati: interestedProducts,
         terjual: soldProducts,
         count: myProducts.count,
       });
     } catch (err) {
-      res.status(400).json({
+      return res.status(400).json({
         message: 'Failed',
         errors: err.message,
       });

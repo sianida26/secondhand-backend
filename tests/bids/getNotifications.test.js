@@ -1,46 +1,38 @@
 const request = require('supertest');
+
 const app = require('../../app');
-const { Users, Products, Bids } = require('../../models');
+const ProductFactory = require('../../models/factories/ProductFactory');
+const UserFactory = require('../../models/factories/UserFactory');
+const { Products, Bids } = require('../../models');
 
 describe('GET notifications', () => {
-  let bearerToken = [];
-  let userProfile = [];
-  let userProduct = [];
+  let usersTest = [];
+  let productsTest = [];
   let bidProduct = [];
 
   beforeAll(async () => {
     for (let i = 0; i < 2; i++) {
-      let registerData = {
-        email: `test${i}@gmail.com`,
-        password: "test123",
-        name: `test${i}`
-      };
-      let response = await request(app)
-        .post('/users/register')
-        .set('Accept', 'application/json')
-        .send(registerData);
-
-      bearerToken.push(`Bearer ${response.body.token}`);
-      userProfile.push(await Users.findOne({ where: { email: registerData.email } }));
+      usersTest.push(await UserFactory());
     }
 
     for (let i = 0; i < 4; i++) {
       let productData = {
         name: `test${i}`,
-        price: 10000,
+        price: Math.floor(Math.random()*9000000)+1000,
         category: "test",
         description: "test",
         filenames: JSON.stringify(["test.png", "test.jpg"]),
-        createdBy: i < 2 ? userProfile[0].id : userProfile[1].id
+        createdBy: i < 2 ? usersTest[0].id : usersTest[1].id
       };
-      userProduct.push(await Products.create(productData));
+      productsTest.push(await Products.create(productData));
+      // productTest.push(await ProductFactory(i < 2 ? usersTest[0].id : usersTest[1].id));
     }
 
-    for (let i = 0; i < userProduct.length; i++) {
+    for (let i = 0; i < productsTest.length; i++) {
       let bidData = {
-        buyerId: i < 2 ? userProfile[1].id : userProfile[0].id,
-        productId: userProduct[i].id,
-        bidPrice: 20000
+        buyerId: i < 2 ? usersTest[1].id : usersTest[0].id,
+        productId: productsTest[i].id,
+        bidPrice: Math.floor(Math.random()*9000000)+1000
       };
       bidProduct.push(await Bids.create(bidData));
     }
@@ -48,15 +40,15 @@ describe('GET notifications', () => {
 
   afterAll(async () => {
     await Promise.all(bidProduct.map(async (x) => x.destroy()));
-    await Promise.all(userProduct.map(async (x) => x.destroy()));
-    await Promise.all(userProfile.map(async (x) => x.destroy()));
+    await Promise.all(productsTest.map(async (x) => x.destroy()));
+    await Promise.all(usersTest.map(async (x) => x.destroy()));
   });
 
   it('Should return 200 if successfully get bid history', () => {
     return request(app)
       .get('/notifications')
       .set('Content-Type', 'application/json')
-      .set('Authorization', bearerToken[0])
+      .set('Authorization', `Bearer ${usersTest[0].accessToken}`)
       .then((res) => {
         expect(res.statusCode).toBe(200);
         expect(res.body).toEqual(

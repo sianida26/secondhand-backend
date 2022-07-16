@@ -1,54 +1,31 @@
 const request = require('supertest');
+
 const app = require('../../app');
+const ProductFactory = require('../../models/factories/ProductFactory');
+const UserFactory = require('../../models/factories/UserFactory');
 const { Users, Products } = require('../../models');
 
 describe('GET products/my-products', () => {
-  let bearerToken = '';
-  let userProfile = null;
-  let userProduct = [];
+  let userTest = null;
+  let productTest = [];
 
   beforeAll(async () => {
-    const registerData = {
-      email: "test@gmail.com",
-      password: "test123",
-      name: "test"
-    }
-
-    const response = await request(app)
-      .post('/users/register')
-      .set('Accept', 'application/json')
-      .send(registerData);
-
-    bearerToken = `Bearer ${response.body.token}`;
-    userProfile = await Users.findOne({ where: { email: registerData.email } });
-
-    let productTest = []
-    for (let i = 1; i < 4; i++) {
-      productTest.push({
-        name: `test${i}`,
-        price: 10000,
-        category: "test",
-        description: "test",
-        filenames: JSON.stringify(["test.png", "test.jpg"]),
-        createdBy: userProfile.id
-      });
-    }
-
-    for (let productData of productTest) {
-      userProduct.push(await Products.create(productData));
+    userTest = await UserFactory();
+    for (let i = 0; i < 4; i++) {
+      productTest.push(await ProductFactory(userTest));
     }
   });
 
   afterAll(async () => {
-    await Promise.all(userProduct.map(async (x) => await x.destroy()));
-    await userProfile.destroy();
+    await Promise.all(productTest.map(async (x) => await x.destroy()));
+    await userTest.destroy();
   });
 
   it('Should return 200 if successfully get my products', () => {
     return request(app)
       .get('/products/my-products')
       .set('Content-Type', 'application/json')
-      .set('Authorization', bearerToken)
+      .set('Authorization', `Bearer ${userTest.accessToken}`)
       .then((res) => {
         expect(res.statusCode).toBe(200);
         expect(res.body).toEqual(
