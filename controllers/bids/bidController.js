@@ -28,15 +28,16 @@ module.exports = {
         buyerName: bidHistory.users.name,
         buyerCity: bidHistory.users.city,
         buyerPhone: bidHistory.users.phone,
+        buyerPic: bidHistory.users.profilePicUrl,
         productName: bidHistory.products.name,
-        productImage: bidHistory.products.imageUrls[0],
+        productImage: bidHistory.products.imageUrls,
         productPrice: bidHistory.products.price,
         bidPrice: bidHistory.bidPrice,
         bidAt: bidHistory.createdAt,
         acceptedAt: bidHistory.acceptedAt,
         declinedAt: bidHistory.declinedAt,
         soldAt: bidHistory.soldAt,
-        isAcceptable: !productAcc,
+        isAcceptable: !(productAcc || bidHistory.declinedAt),
       });
     } catch (err) {
       return res.status(404).json({
@@ -73,13 +74,11 @@ module.exports = {
       let notif = [];
 
       myProducts.rows.map((product) => {
-        let images = product.filenames ? product.imageUrls[0] : '';
-
         notif.push({
           id: 0,
           productName: product.name,
           price: product.price,
-          image: images,
+          image: product.imageUrls,
           type: 'Berhasil diterbitkan',
           time: product.updatedAt,
         });
@@ -91,7 +90,7 @@ module.exports = {
                 id: 0,
                 productName: product.name,
                 price: product.price,
-                image: images,
+                image: product.imageUrls,
                 type: 'Penawaran produk',
                 bidPrice: bid.bidPrice,
                 time: bid.createdAt,
@@ -103,7 +102,7 @@ module.exports = {
                 id: 0,
                 productName: product.name,
                 price: product.price,
-                image: images,
+                image: product.imageUrls,
                 type: 'Penawaran ditolak',
                 bidPrice: bid.bidPrice,
                 time: bid.declinedAt,
@@ -115,7 +114,7 @@ module.exports = {
                 id: 0,
                 productName: product.name,
                 price: product.price,
-                image: images,
+                image: product.imageUrls,
                 type: 'Berhasil terjual',
                 bidPrice: bid.bidPrice,
                 time: bid.soldAt,
@@ -126,13 +125,11 @@ module.exports = {
       });
 
       myBids.rows.map((bid) => {
-        let images = bid.products.filenames ? bid.products.imageUrls[0] : '';
-
         notif.push({
           id: 0,
           productName: bid.products.name,
           price: bid.products.price,
-          image: images,
+          image: bid.products.imageUrls,
           type: 'Penawaran produk',
           bidPrice: bid.bidPrice,
           time: bid.createdAt,
@@ -143,7 +140,7 @@ module.exports = {
             id: 0,
             productName: bid.products.name,
             price: bid.products.price,
-            image: images,
+            image: bidProducts.imageUrls,
             type: 'Penawaran diterima',
             bidPrice: bid.bidPrice,
             time: bid.acceptedAt,
@@ -155,7 +152,7 @@ module.exports = {
             id: 0,
             productName: bid.products.name,
             price: bid.products.price,
-            image: images,
+            image: bid.products.imageUrls,
             type: 'Penawaran ditolak',
             bidPrice: bid.bidPrice,
             time: bid.declinedAt,
@@ -186,6 +183,7 @@ module.exports = {
       const bid = await Bids.findByPk(req.params.id);
       const product = await Products.findByPk(bid.productId);
       const buyer = await Users.findByPk(bid.buyerId);
+      const seller = await Users.findByPk(product.createdBy);
 
       if (!bid) {
         return res.status(404).json({
@@ -201,7 +199,7 @@ module.exports = {
 
       if (bid.declinedAt !== null || bid.soldAt !== null) {
         return res.status(403).json({
-          message: 'Forbidden',
+          message: 'Penawaran telah ditolak atau sudah terjual',
         });
       }
 
@@ -211,16 +209,17 @@ module.exports = {
 
       const emailData = {
         buyerName: buyer.name,
+        sellerName: seller.name,
         bidId: bid.id,
         productName: product.name,
         bidPrice: bid.bidPrice,
         buyerEmail: buyer.email,
         subject: 'Penawaran Kamu Sudah Diterima',
         status: 'Diterima',
+        datetime: bid.acceptedAt,
       };
 
-      sendEmail.sendEmailToBuyer(emailData.buyerName, emailData.bidId, emailData.productName, emailData.bidPrice, emailData.buyerEmail, emailData.subject, emailData.status);
-      
+      sendEmail.sendAcceptBidToBuyer(emailData.buyerName, emailData.sellerName, emailData.bidId, emailData.productName, emailData.bidPrice, emailData.buyerEmail, emailData.subject, emailData.status, emailData.datetime);
 
       return res.status(200).json({
         message: 'OK',
@@ -238,6 +237,7 @@ module.exports = {
       const bid = await Bids.findByPk(req.params.id);
       const product = await Products.findByPk(bid.productId);
       const buyer = await Users.findByPk(bid.buyerId);
+      const seller = await Users.findByPk(product.createdBy);
 
       if (!bid) {
         return res.status(404).json({
@@ -263,15 +263,17 @@ module.exports = {
 
       const emailData = {
         buyerName: buyer.name,
+        sellerName: seller.name,
         bidId: bid.id,
         productName: product.name,
         bidPrice: bid.bidPrice,
         buyerEmail: buyer.email,
         subject: 'Penawaran Kamu Ditolak',
         status: 'Ditolak',
+        datetime: bid.acceptedAt,
       };
 
-      sendEmailToBuyer(emailData.buyerName, emailData.bidId, emailData.productName, emailData.bidPrice, emailData.buyerEmail, emailData.subject, emailData.status);
+      sendEmail.sendRejectBidToBuyer(emailData.buyerName, emailData.sellerName, emailData.bidId, emailData.productName, emailData.bidPrice, emailData.buyerEmail, emailData.subject, emailData.status, emailData.datetime);
 
       return res.status(200).json({
         message: 'OK',
@@ -289,6 +291,7 @@ module.exports = {
       const bid = await Bids.findByPk(req.params.id);
       const product = await Products.findByPk(bid.productId);
       const buyer = await Users.findByPk(bid.buyerId);
+      const seller = await Users.findByPk(product.createdBy);
 
       if (!bid) {
         return res.status(404).json({
@@ -304,7 +307,7 @@ module.exports = {
 
       if (bid.declinedAt !== null) {
         return res.status(403).json({
-          message: 'Forbidden',
+          message: 'Penawaran telah ditolak',
         });
       }
 
@@ -314,15 +317,17 @@ module.exports = {
 
       const emailData = {
         buyerName: buyer.name,
+        sellerName: seller.name,
         bidId: bid.id,
         productName: product.name,
         bidPrice: bid.bidPrice,
         buyerEmail: buyer.email,
         subject: 'Pembayaran Pesanan Telah Kami Terima',
         status: 'Lunas',
+        datetime: bid.acceptedAt,
       };
 
-      sendEmailToBuyer(emailData.buyerName, emailData.bidId, emailData.productName, emailData.bidPrice, emailData.buyerEmail, emailData.subject, emailData.status);
+      sendEmail.sendInvoiceToBuyer(emailData.buyerName, emailData.sellerName, emailData.bidId, emailData.productName, emailData.bidPrice, emailData.buyerEmail, emailData.subject, emailData.status, emailData.datetime);
 
       return res.status(200).json({
         message: 'OK',
@@ -335,7 +340,7 @@ module.exports = {
     }
   },
 
-  async createBid(req, res){
+  async createBid(req, res) {
     try {
       const product = await Products.findByPk(req.body.id);
 
@@ -343,10 +348,10 @@ module.exports = {
       if (!product) return res.status(404).json({ message: 'Produk tidak ditemukan' });
 
       //if product already been sold, return 404
-      if (!await product.isBiddable()) return res.status(404).json({ message: 'Produk telah ditarik penjual atau telah berhasil terjual' });
+      if (!(await product.isBiddable())) return res.status(404).json({ message: 'Produk telah ditarik penjual atau telah berhasil terjual' });
 
       //if buys her product
-      console.log(`Created by ${ product.createdBy } and requested by ${ req.user.id }`)
+      console.log(`Created by ${product.createdBy} and requested by ${req.user.id}`);
       if (product.createdBy == req.user.id) return res.status(403).json({ message: 'Anda tidak dapat menawar produk anda sendiri' });
 
       //if price is less than 0
@@ -355,8 +360,8 @@ module.exports = {
       await Bids.create({ buyerId: req.user.id, productId: req.body.id, bidPrice: req.body.bidPrice });
       return res.json({ message: 'Tawaran berhasil dibuat' });
     } catch (error) {
-      console.error(error)
+      console.error(error);
       return res.status(500).json({ message: 'Terjadi kesalahan pada server' });
     }
-  }
+  },
 };

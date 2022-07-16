@@ -14,11 +14,11 @@ module.exports = (sequelize, DataTypes) => {
       // define association here
       Users.hasMany(models.Products, {
         foreignKey: 'createdBy',
-        as: 'products'
+        as: 'products',
       });
       Users.hasMany(models.Bids, {
         foreignKey: 'buyerId',
-        as: 'bids'
+        as: 'bids',
       });
     }
   }
@@ -33,19 +33,19 @@ module.exports = (sequelize, DataTypes) => {
       image: DataTypes.TEXT,
       accessToken: {
         type: DataTypes.VIRTUAL,
-        get(){
-          return jwt.sign({ id: this.id, name: this.name, email: this.email }, JWT_KEY)
-        }
+        get() {
+          return jwt.sign({ id: this.id, name: this.name, email: this.email }, JWT_KEY);
+        },
       },
       profilePicUrl: {
         type: DataTypes.VIRTUAL,
-        get(){
-          return this.image ? this.image : `https://avatars.dicebear.com/api/bottts/${this.id}.svg`
+        get() {
+          return this.image ? this.image : `https://avatars.dicebear.com/api/bottts/${this.id}.svg`;
         },
-        set(value){
+        set(value) {
           this.setDataValue('image', value);
-        }
-      }
+        },
+      },
     },
     {
       sequelize,

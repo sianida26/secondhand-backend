@@ -67,6 +67,9 @@ module.exports = {
       if (req.files.length == 0) {
         return res.status(422).json({
           message: 'Semua Input harus diisi',
+          errors: {
+            files: 'Harus menyertakan setidaknya 1 gambar!',
+          },
         });
       }
 
@@ -78,7 +81,9 @@ module.exports = {
       }
 
       // Uploading Image to firebase storage
+      console.log('waktunya upload');
       const imageUrls = await uploadImageToFirebase(req);
+      console.log('sudah selesai upload');
 
       await Products.create({
         name,
@@ -143,6 +148,7 @@ module.exports = {
         });
       }
 
+      // Delete and upload new image urls
       await deleteImageFromFirebase(product.imageUrls);
       const imageUrls = await uploadImageToFirebase(req);
 
@@ -168,36 +174,44 @@ module.exports = {
 };
 
 const uploadImageToFirebase = async (req) => {
-  let imageUrls = [];
+  try {
+    let imageUrls = [];
 
-  await Promise.all(
-    req.files.map(async (e) => {
-      const file = e.buffer;
-      const storageRef = ref(storage, `images/products/${Date.now()}-${e.originalname}`);
+    await Promise.all(
+      req.files.map(async (e, i) => {
+        console.log('Upload file yang ke ', i);
+        const file = e.buffer;
+        const storageRef = ref(storage, `images/products/${Date.now()}-${e.originalname}`);
 
-      const metadata = {
-        contentType: e.mimetype,
-      };
+        const metadata = {
+          contentType: e.mimetype,
+        };
 
-      const snapshot = await uploadBytes(storageRef, file, metadata);
-      const url = await getDownloadURL(snapshot.ref);
-      imageUrls.push(url);
-    })
-  );
+        console.log('Upload bytes yang ke ', i);
+        const snapshot = await uploadBytes(storageRef, file, metadata);
+        console.log('GetDownloadURL yang ke ', i);
+        const url = await getDownloadURL(snapshot.ref);
+        console.log('selesai GetDownloadURL yang ke ', i);
+        imageUrls.push(url);
+      })
+    );
 
-  return imageUrls;
+    return imageUrls;
+  } catch (err) {
+    console.warn(err.message);
+  }
 };
 
 const deleteImageFromFirebase = async (imageUrls) => {
-  imageUrls.map(async (imgUrl) => {
-    try {
+  try {
+    imageUrls.map(async (imgUrl) => {
       // Create image ref from image url in firebase storage
       const imageRef = ref(storage, imgUrl);
 
       // Delete the file
       await deleteObject(imageRef);
-    } catch (err) {
-      console.warn(err.message);
-    }
-  });
+    });
+  } catch (err) {
+    console.warn(err.message);
+  }
 };

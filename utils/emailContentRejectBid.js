@@ -154,7 +154,7 @@ const emailContentAcceptBids = (buyer, seller, noPesanan, productName, bidPrice,
                     <p style="font-size: 14px;
                     font-weight: bold;
                     margin: 10px 0 0 0;
-                    color: #28a745;">${status}</p>
+                    color: #e23636;">${status}</p>
                   </td>
                 </tr>
               </table>
