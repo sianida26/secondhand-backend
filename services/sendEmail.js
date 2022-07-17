@@ -3,6 +3,7 @@ const nodemailer = require('nodemailer');
 const emailContentAcceptBids = require('../utils/emailContentAcceptBid');
 const emailContentRejectBids = require('../utils/emailContentRejectBid');
 const emailContentInvoice = require('../utils/emailContentInvoice');
+const emailContentNewBid = require('../utils/emailContentNewBid');
 const emailContentForgotPassword = require('../utils/emailContentForgotPassword');
 
 const { SMTP_HOST, SMTP_PORT, SMTP_USERNAME, SMTP_PASSWORD } = process.env;
@@ -17,6 +18,10 @@ function sendRejectBidToBuyer(buyerName, sellerName, bidId, productName, bidPric
 
 function sendInvoiceToBuyer(buyerName, sellerName, bidId, productName, bidPrice, buyerEmail, subject, status, datetime) {
   sendEmail(buyerEmail, subject, emailContentInvoice(buyerName, sellerName, bidId, productName, bidPrice, status, datetime));
+}
+
+function sendNewBidNotifToSeller(buyerName, productName, bidPrice, sellerEmail, subject, datetime) {
+  sendEmail(sellerEmail, subject, emailContentNewBid(buyerName, productName, bidPrice, datetime));
 }
 
 function sendEmailToUserForgotPassword(email, token) {
@@ -53,5 +58,6 @@ module.exports = {
   sendAcceptBidToBuyer,
   sendRejectBidToBuyer,
   sendInvoiceToBuyer,
+  sendNewBidNotifToSeller,
   sendEmailToUserForgotPassword,
 };

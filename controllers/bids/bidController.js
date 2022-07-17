@@ -343,6 +343,7 @@ module.exports = {
   async createBid(req, res) {
     try {
       const product = await Products.findByPk(req.body.id);
+      const seller = await Users.findByPk(product.createdBy);
 
       //if product not found, return 404
       if (!product) return res.status(404).json({ message: 'Produk tidak ditemukan' });
@@ -356,6 +357,17 @@ module.exports = {
 
       //if price is less than 0
       if (req.body.bidPrice < 0) return res.status(422).json({ errors: { bidPrice: 'Harga harus lebih dari Rp0!' } });
+
+      const emailData = {
+        buyerName: req.user.name,
+        productName: product.name,
+        bidPrice: req.body.bidPrice,
+        sellerEmail: seller.email,
+        subject: 'Kamu mendapatkan penawaran baru',
+        datetime: new Date(),
+      };
+
+      sendEmail.sendNewBidNotifToSeller(emailData.buyerName, emailData.productName, emailData.bidPrice, emailData.sellerEmail, emailData.subject, emailData.datetime);
 
       await Bids.create({ buyerId: req.user.id, productId: req.body.id, bidPrice: req.body.bidPrice });
       return res.json({ message: 'Tawaran berhasil dibuat' });
