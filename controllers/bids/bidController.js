@@ -78,6 +78,8 @@ module.exports = {
           id: 0,
           productName: product.name,
           productId: product.id,
+          category: product.category,
+          description: product.description,
           price: product.price,
           image: product.imageUrls,
           type: 'Berhasil diterbitkan',
