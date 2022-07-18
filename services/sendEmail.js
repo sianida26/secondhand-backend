@@ -4,6 +4,7 @@ const emailContentAcceptBids = require('../utils/emailContentAcceptBid');
 const emailContentRejectBids = require('../utils/emailContentRejectBid');
 const emailContentInvoice = require('../utils/emailContentInvoice');
 const emailContentNewBid = require('../utils/emailContentNewBid');
+const emailContentVerification = require('../utils/emailContentVerification');
 const emailContentForgotPassword = require('../utils/emailContentForgotPassword');
 
 const { SMTP_HOST, SMTP_PORT, SMTP_USERNAME, SMTP_PASSWORD } = process.env;
@@ -22,6 +23,10 @@ function sendInvoiceToBuyer(buyerName, sellerName, bidId, productName, bidPrice,
 
 function sendNewBidNotifToSeller(buyerName, productName, bidPrice, sellerEmail, subject, datetime) {
   sendEmail(sellerEmail, subject, emailContentNewBid(buyerName, productName, bidPrice, datetime));
+}
+
+function sendEmailVerification(userName, userEmail, subject, token) {
+  sendEmail(userEmail, subject, emailContentVerification(userName, token));
 }
 
 function sendEmailToUserForgotPassword(email, token) {
@@ -59,5 +64,6 @@ module.exports = {
   sendRejectBidToBuyer,
   sendInvoiceToBuyer,
   sendNewBidNotifToSeller,
+  sendEmailVerification,
   sendEmailToUserForgotPassword,
 };

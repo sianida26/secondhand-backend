@@ -1,4 +1,4 @@
-const emailContentAcceptBids = (buyer, seller, noPesanan, productName, bidPrice, status, datetime) => {
+const emailContentRejectBids = (buyer, seller, noPesanan, productName, bidPrice, status, datetime) => {
   return ` 
   <!DOCTYPE html>
 <html lang="en" xmlns="http://www.w3.org/1999/xhtml" xmlns:o="urn:schemas-microsoft-com:office:office">
@@ -226,4 +226,4 @@ const emailContentAcceptBids = (buyer, seller, noPesanan, productName, bidPrice,
   `;
 };
 
-module.exports = emailContentAcceptBids;
+module.exports = emailContentRejectBids;
