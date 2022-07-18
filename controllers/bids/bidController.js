@@ -180,9 +180,7 @@ module.exports = {
       //   notif = notif.slice(0, 10);
       // }
 
-      return res.status(200).json({
-        data: notif,
-      });
+      return res.status(200).json(notif);
     } catch (err) {
       return res.status(403).json({
         message: '',
