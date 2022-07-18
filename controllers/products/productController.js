@@ -210,6 +210,7 @@ module.exports = {
         .filter((product) => product.isBiddable() && product.createdBy !== req.user?.id)
         .map((product) => ({
           id: product.id,
+          name: product.name,
           category: product.category,
           image: product.imageUrls,
           price: product.price,
