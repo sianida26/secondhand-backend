@@ -1,29 +1,17 @@
 const request = require('supertest');
+
 const app = require('../../app');
-const { Users } = require('../../models');
+const UserFactory = require('../../models/factories/UserFactory');
 
 describe('POST reset-password', () => {
-  let token = '';
-  let userProfile = null;
+  let userTest = null;
 
   beforeAll(async () => {
-    const registerData = {
-      email: "test@gmail.com",
-      password: "test123",
-      name: "test"
-    }
-
-    const response = await request(app)
-      .post('/users/register')
-      .set('Accept', 'application/json')
-      .send(registerData);
-
-    token = response.body.token;
-    userProfile = await Users.findOne({ where: { email: registerData.email } });
+    userTest = await UserFactory();
   });
 
   afterAll(async () => {
-    await userProfile.destroy();
+    await userTest.destroy();
   });
 
   it('Should return 200 if successfully update', () => {
@@ -33,7 +21,7 @@ describe('POST reset-password', () => {
     return request(app)
       .post('/reset-password')
       .set('Content-Type', 'application/json')
-      .send({ token, password, password_confirmation })
+      .send({ token: userTest.accessToken, password, password_confirmation })
       .then((res) => {
         expect(res.statusCode).toBe(200);
         expect(res.body).toEqual(
@@ -70,7 +58,7 @@ describe('POST reset-password', () => {
     return request(app)
       .post('/reset-password')
       .set('Content-Type', 'application/json')
-      .send({ token, password, password_confirmation })
+      .send({ token: userTest.accessToken, password, password_confirmation })
       .then((res) => {
         expect(res.statusCode).toBe(422);
         expect(res.body).toEqual(
@@ -91,7 +79,7 @@ describe('POST reset-password', () => {
     return request(app)
       .post('/reset-password')
       .set('Content-Type', 'application/json')
-      .send({ token, password, password_confirmation })
+      .send({ token: userTest.accessToken, password, password_confirmation })
       .then((res) => {
         expect(res.statusCode).toBe(422);
         expect(res.body).toEqual(

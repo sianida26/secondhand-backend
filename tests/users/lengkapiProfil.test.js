@@ -1,26 +1,14 @@
 const request = require('supertest');
 const path = require('path');
+
 const app = require('../../app');
-const { Users } = require('../../models');
+const UserFactory = require('../../models/factories/UserFactory');
 
 describe('POST users/lengkapi-profil', () => {
-  let bearerToken = '';
   let userProfile = null;
 
   beforeAll(async () => {
-    const registerData = {
-      email: "test@gmail.com",
-      password: "test123",
-      name: "test"
-    }
-
-    const response = await request(app)
-      .post('/users/register')
-      .set('Accept', 'application/json')
-      .send(registerData);
-
-    bearerToken = `Bearer ${response.body.token}`;
-    userProfile = await Users.findOne({ where: { email: registerData.email } });
+    userProfile = await UserFactory();
   });
 
   afterAll(async () => {
@@ -37,7 +25,7 @@ describe('POST users/lengkapi-profil', () => {
     return request(app)
       .post('/users/lengkapi-profil')
       .set('Content-Type', 'multipart/form-data')
-      .set('Authorization', bearerToken)
+      .set('Authorization', `Bearer ${userProfile.accessToken}`)
       .field('name', name)
       .field('city', city)
       .field('address', address)
@@ -89,7 +77,7 @@ describe('POST users/lengkapi-profil', () => {
     return request(app)
       .post('/users/lengkapi-profil')
       .set('Content-Type', 'multipart/form-data')
-      .set('Authorization', bearerToken)
+      .set('Authorization', `Bearer ${userProfile.accessToken}`)
       .field('name', name)
       .field('city', city)
       .field('address', address)
@@ -114,7 +102,7 @@ describe('POST users/lengkapi-profil', () => {
     return request(app)
       .post('/users/lengkapi-profil')
       .set('Content-Type', 'multipart/form-data')
-      .set('Authorization', bearerToken)
+      .set('Authorization', `Bearer ${userProfile.accessToken}`)
       .field('name', name)
       .field('city', city)
       .field('address', address)
@@ -139,7 +127,7 @@ describe('POST users/lengkapi-profil', () => {
     return request(app)
       .post('/users/lengkapi-profil')
       .set('Content-Type', 'multipart/form-data')
-      .set('Authorization', bearerToken)
+      .set('Authorization', `Bearer ${userProfile.accessToken}`)
       .field('name', name)
       .field('city', city)
       .field('address', address)

@@ -32,7 +32,7 @@ const handleLogin = async (req, res) => {
       token: accessToken,
     });
   } catch (err) {
-    res.status(500).json({
+    return res.status(500).json({
       name: err.name,
       message: err.message,
     });
@@ -43,13 +43,13 @@ const handleGetUser = async (req, res) => {
   const user = await userModel.findByPk(req.user.id);
 
   if (!user) {
-    res.status(404).json({
+    return res.status(404).json({
       name: user.name,
       message: 'User not found!',
     });
   }
 
-  res.status(200).json({
+  return res.status(200).json({
     name: user.name,
     email: user.email,
   });
@@ -72,5 +72,5 @@ const createToken = (user) => {
 
 module.exports = {
   handleLogin,
-  handleGetUser
+  handleGetUser,
 };
