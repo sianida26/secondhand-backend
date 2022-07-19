@@ -23,6 +23,12 @@ const handleLogin = async (req, res) => {
         message: 'Username atau password salah',
       });
 
+    if (user.emailVerifiedAt == null) {
+      return res.status(401).json({
+        message: 'Email belum terverifikasi. Silakan periksa email Anda',
+      });
+    }
+
     const accessToken = createToken(user);
 
     res.status(200).json({
@@ -72,5 +78,5 @@ const createToken = (user) => {
 
 module.exports = {
   handleLogin,
-  handleGetUser
+  handleGetUser,
 };

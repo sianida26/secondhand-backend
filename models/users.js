@@ -46,6 +46,7 @@ module.exports = (sequelize, DataTypes) => {
           this.setDataValue('image', value);
         },
       },
+      emailVerifiedAt: DataTypes.DATE,
     },
     {
       sequelize,
