@@ -19,15 +19,14 @@ module.exports = {
 
         sendEmailVerification(createUser.name, email, 'Verifikasi Email', token);
 
-        res.status(201).json({
+        return res.status(201).json({
           name: createUser.name,
-          city: createUser.city,
           token: token,
           profilePhoto: createUser.profilePicUrl,
         });
       })
       .catch((err) => {
-        res.status(422).json({
+        return res.status(422).json({
           message: 'Terdapat data yang tidak sesuai.',
           errors: err.message,
         });

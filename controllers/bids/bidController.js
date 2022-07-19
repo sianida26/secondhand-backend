@@ -23,7 +23,7 @@ module.exports = {
 
       let productAcc = productsCheck.bids.find((bid) => bid.acceptedAt);
 
-      res.status(200).json({
+      return res.status(200).json({
         id: bidHistory.id,
         buyerName: bidHistory.users.name,
         buyerCity: bidHistory.users.city,
@@ -40,7 +40,7 @@ module.exports = {
         isAcceptable: !(productAcc || bidHistory.declinedAt),
       });
     } catch (err) {
-      res.status(404).json({
+      return res.status(404).json({
         message: `Product with id ${req.params.id} not found`,
         errors: err.message,
       });
@@ -77,6 +77,9 @@ module.exports = {
         notif.push({
           id: 0,
           productName: product.name,
+          productId: product.id,
+          category: product.category,
+          description: product.description,
           price: product.price,
           image: product.imageUrls,
           type: 'Berhasil diterbitkan',
@@ -89,6 +92,8 @@ module.exports = {
               notif.push({
                 id: 0,
                 productName: product.name,
+                productId: product.id,
+                bidId: bid.id,
                 price: product.price,
                 image: product.imageUrls,
                 type: 'Penawaran produk',
@@ -102,6 +107,8 @@ module.exports = {
                 id: 0,
                 productName: product.name,
                 price: product.price,
+                productId: product.id,
+                bidId: bid.id,
                 image: product.imageUrls,
                 type: 'Penawaran ditolak',
                 bidPrice: bid.bidPrice,
@@ -114,6 +121,8 @@ module.exports = {
                 id: 0,
                 productName: product.name,
                 price: product.price,
+                productId: product.id,
+                bidId: bid.id,
                 image: product.imageUrls,
                 type: 'Berhasil terjual',
                 bidPrice: bid.bidPrice,
@@ -129,6 +138,8 @@ module.exports = {
           id: 0,
           productName: bid.products.name,
           price: bid.products.price,
+          productId: bid.products.id,
+          bidId: bid.id,
           image: bid.products.imageUrls,
           type: 'Penawaran produk',
           bidPrice: bid.bidPrice,
@@ -140,6 +151,8 @@ module.exports = {
             id: 0,
             productName: bid.products.name,
             price: bid.products.price,
+            productId: bid.products.id,
+            bidId: bid.id,
             image: bidProducts.imageUrls,
             type: 'Penawaran diterima',
             bidPrice: bid.bidPrice,
@@ -152,6 +165,8 @@ module.exports = {
             id: 0,
             productName: bid.products.name,
             price: bid.products.price,
+            productId: bid.products.id,
+            bidId: bid.id,
             image: bid.products.imageUrls,
             type: 'Penawaran ditolak',
             bidPrice: bid.bidPrice,
@@ -167,9 +182,7 @@ module.exports = {
       //   notif = notif.slice(0, 10);
       // }
 
-      res.status(200).json({
-        data: notif,
-      });
+      return res.status(200).json(notif);
     } catch (err) {
       return res.status(403).json({
         message: '',

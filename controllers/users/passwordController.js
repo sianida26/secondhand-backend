@@ -17,7 +17,7 @@ module.exports = {
     const token = jwt.sign({ id: userId.id }, JWT_KEY);
     sendEmail.sendEmailToUserForgotPassword(userId.email, token);
 
-    res.status(200).json({
+    return res.status(200).json({
       message: "Email berhasil dikirim. Silakan periksa email Anda"
     });
   },
@@ -55,7 +55,7 @@ module.exports = {
     const hashedPassword = await bcrypt.hash(password_confirmation, 10);
     await userId.update({ password: hashedPassword });
 
-    res.status(200).json({
+    return res.status(200).json({
       message: "Password berhasil diubah!"
     });
   }

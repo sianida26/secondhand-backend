@@ -7,16 +7,27 @@ const middlewares = require('../middlewares');
 
 const router = express.Router();
 
-const storage = multer.diskStorage({
-  destination: (req, file, cb) => cb(null, './images/profiles'),
-  filename: (req, file, cb) => {
-    const fileName = `${Date.now()}${Math.floor(Math.random() * 1e6)}.${file.originalname.split('.').pop()}`; //random filename
-    cb(null, fileName);
-  },
-});
+// multer local storage
+// const storage = multer.diskStorage({
+//   destination: (req, file, cb) => cb(null, './images/profiles'),
+//   filename: (req, file, cb) => {
+//     const fileName = `${Date.now()}${Math.floor(Math.random()*1E6)}.${file.originalname.split('.').pop()}`; //random filename
+//     cb(null, fileName)
+//   }
+// });
+// const upload = multer({ storage: storage });
+
+const fileFilter = (req, file, cb) => {
+  if (file.mimetype === 'image/jpeg' || file.mimetype === 'image/jpg' || file.mimetype === 'image/png') {
+    cb(null, true);
+  } else {
+    cb(null, false);
+    return cb(new Error('Gunakan format jpeg/jpg/png'));
+  }
+};
 
 // multer configuration for file upload
-const upload = multer({ storage: storage });
+const upload = multer({ fileFilter: fileFilter });
 
 const createAccountLimiter = rateLimit({
   windowMs: 1 * 60 * 1000, // 1 minute = 60000
