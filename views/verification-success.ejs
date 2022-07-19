@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+
+<style>
+    @import url('https://fonts.googleapis.com/css2?family=Signika+Negative:wght@300;700&display=swap');
+
+    * {
+        margin: 0;
+        padding: 0;
+        font-family: Helvetica, sans-serif;
+    }
+
+    body {
+        background-image: linear-gradient(to right, #4B1979, #7647a1);
+        display: flex;
+    }
+
+    section {
+        margin: 100px auto;
+        color: #000000;
+        background-color: #ffffff;
+        padding: 30px;
+        border-radius: 5px;
+    }
+
+    section a {
+        text-decoration: none;
+        background-color: #7126B5;
+        color: white;
+        padding: 11px 55px;
+        display: inline-block;
+        margin-top: 25px;
+        border-radius: 30px;
+        font-weight: bold;
+    }
+
+    section h1 {
+        margin: 0;
+        font-size: 35px;
+        font-family: 'Signika Negative', sans-serif;
+    }
+
+    section p {
+        font-size: 16px;
+        margin: 15px 0 0 3px;
+        font-family: 'Signika Negative', sans-serif;
+    }
+
+    section div {
+        text-align: center;
+    }
+
+    @media (max-width: 600px) {
+        body {
+            display: block;
+        }
+
+        section {
+            margin: 100px 40px;
+        }
+    }
+</style>
+
+<body>
+    <section>
+        <h1>Selamat Email Kamu Sudah<br>Diverifikasi</h1>
+
+        <p>Silahkan klik link dibawah ini untuk login</p>
+
+        <div><a href="<%= FRONTEND_URL %>/login">Login</a></div>
+    </section>
+</body>
+
+</html>
