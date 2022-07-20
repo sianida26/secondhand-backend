@@ -160,7 +160,7 @@ module.exports = {
       }
 
       // Delete and upload new image urls
-      await deleteImageFromFirebase(product.imageUrls.filter(url => req.body.oldFileUrls?.includes(url)));
+      await deleteImageFromFirebase(product.imageUrls.filter(url => !req.body.oldFileUrls?.includes(url)));
       const imageUrls = await uploadImageToFirebase(req);
 
       await product.update({
@@ -168,7 +168,7 @@ module.exports = {
         price,
         category,
         description,
-        imageUrls: [...product.imageUrls.filter(url => !req.body.oldFileUrls?.includes(url)), ...imageUrls],
+        imageUrls: [...product.imageUrls.filter(url => req.body.oldFileUrls?.includes(url)), ...imageUrls],
         createdBy: req.user.id,
       });
 
