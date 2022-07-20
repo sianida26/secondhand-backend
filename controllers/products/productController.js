@@ -123,6 +123,7 @@ module.exports = {
           price: product.price,
           category: product.category,
           image: product.imageUrls,
+          description: product.description,
         });
 
         if (product.bids != '') {
