@@ -23,7 +23,7 @@ const handleLogin = async (req, res) => {
         message: 'Username atau password salah',
       });
 
-    if (user.emailVerifiedAt == null) {
+    if (user.emailVerifiedAt == null && process.env.NODE_ENV === 'production') {
       return res.status(401).json({
         message: 'Email belum terverifikasi. Silakan periksa email Anda',
       });
