@@ -150,7 +150,7 @@ module.exports = {
 
       console.log('oldFIleUrls', req.body.oldFileUrls)
 
-      if (!(req.files || req.body.oldFileUrls?.length === 0)){
+      if (!(req.files || oldFileUrls?.length > 0)){
         return res.status(422).json({
           message: 'Ada data yang tidak sesuai.',
           errors: {
