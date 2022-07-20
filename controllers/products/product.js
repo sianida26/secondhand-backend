@@ -135,11 +135,11 @@ module.exports = {
         });
       }
 
-      if (req.files.length == 0) {
-        return res.status(422).json({
-          message: 'Semua Input harus diisi',
-        });
-      }
+      // if (req.files.length == 0) {
+      //   return res.status(422).json({
+      //     message: 'Semua Input harus diisi',
+      //   });
+      // }
 
       if (validator.fails()) {
         return res.status(422).json({
