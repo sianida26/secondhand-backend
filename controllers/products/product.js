@@ -118,14 +118,14 @@ module.exports = {
           price,
           category,
           description,
-          files: req.files,
+          // files: req.files,
         },
         {
           name: [rules.required(), rules.max(255)],
           price: [rules.required(), rules.number(), rules.min(0)],
           category: [rules.required(), rules.max(255)],
           description: [rules.required()],
-          files: [rules.array(), rules.max(4)],
+          // files: [rules.array(), rules.max(4)],
         }
       );
 
@@ -146,6 +146,17 @@ module.exports = {
           message: 'Ada data yang tidak sesuai.',
           errors: validator.getErrors(),
         });
+      }
+
+      console.log('oldFIleUrls', req.body.oldFileUrls)
+
+      if (!(req.files || req.body.oldFileUrls?.length === 0)){
+        return res.status(422).json({
+          message: 'Ada data yang tidak sesuai.',
+          errors: {
+            file: 'Harus menyertakan setidaknya 1 file!'
+          }
+        })
       }
 
       // Delete and upload new image urls
