@@ -108,7 +108,7 @@ module.exports = {
 
   async handleEditProductById(req, res) {
     try {
-      const { name, price, category, description } = req.body;
+      const { name, price, category, description, oldFileUrls } = req.body;
       const product = await Products.findByPk(req.params.id);
 
       const rules = Validator.rules;
@@ -149,7 +149,7 @@ module.exports = {
       }
 
       // Delete and upload new image urls
-      await deleteImageFromFirebase(product.imageUrls);
+      await deleteImageFromFirebase(product.imageUrls.filter(url => req.body.oldFileUrls?.includes(url)));
       const imageUrls = await uploadImageToFirebase(req);
 
       await product.update({
@@ -157,7 +157,7 @@ module.exports = {
         price,
         category,
         description,
-        imageUrls,
+        imageUrls: [...product.imageUrls.filter(url => !req.body.oldFileUrls?.includes(url)), ...imageUrls],
         createdBy: req.user.id,
       });
 
