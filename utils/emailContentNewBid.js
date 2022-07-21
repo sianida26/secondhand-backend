@@ -149,7 +149,9 @@ const emailContentNewBid = (buyer, productName, bidPrice, datetime) => {
                                     </td>
                                     <td align="right">
                                         <p style="font-size: 14px;
-                    margin: 10px 0 10px 0;">Rp ${bidPrice.toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,')}</p>
+                    margin: 10px 0 10px 0;">Rp ${Number(bidPrice)
+                      .toFixed(2)
+                      .replace(/\d(?=(\d{3})+\.)/g, '$&,')}</p>
                                     </td>
                                 </tr>
                             </table>

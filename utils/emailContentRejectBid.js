@@ -184,7 +184,9 @@ const emailContentRejectBids = (buyer, seller, noPesanan, productName, bidPrice,
                   </td>
                   <td align="right">
                     <p style="font-size: 14px;
-                    margin: 10px 0 10px 0;">Rp ${bidPrice.toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,')}</p>
+                    margin: 10px 0 10px 0;">Rp ${Number(bidPrice)
+                      .toFixed(2)
+                      .replace(/\d(?=(\d{3})+\.)/g, '$&,')}</p>
                   </td>
                 </tr>
               </table>
@@ -199,7 +201,9 @@ const emailContentRejectBids = (buyer, seller, noPesanan, productName, bidPrice,
                   <td align="right">
                     <p style="color: #7126B5;
                     font-size: 14px;
-                    font-weight: bold;">Rp ${bidPrice.toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,')}</p>
+                    font-weight: bold;">Rp ${Number(bidPrice)
+                      .toFixed(2)
+                      .replace(/\d(?=(\d{3})+\.)/g, '$&,')}</p>
                   </td>
                 </tr>
               </table>
