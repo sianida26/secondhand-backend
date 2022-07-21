@@ -73,7 +73,7 @@ module.exports = {
       return res.status(201).json({
         message: "OK",
         detail: `User with id ${userId.id} has been updated!`,
-        image: userInfo.image
+        image: imageUrls
       });
     } catch (err) {
       return res.status(400).json({
