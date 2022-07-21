@@ -36,6 +36,8 @@ const handleLogin = async (req, res) => {
       city: user.city,
       profilePhoto: user.profilePicUrl,
       token: accessToken,
+      address: user.address,
+      phone: user.phone,
     });
   } catch (err) {
     return res.status(500).json({
