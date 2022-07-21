@@ -201,7 +201,9 @@ const emailContentInvoice = (buyer, seller, noPesanan, productName, bidPrice, st
                   <td align="right">
                     <p style="color: #7126B5;
                     font-size: 14px;
-                    font-weight: bold;">Rp ${bidPrice.toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,')}</p>
+                    font-weight: bold;">Rp ${Number(bidPrice)
+                      .toFixed(2)
+                      .replace(/\d(?=(\d{3})+\.)/g, '$&,')}</p>
                   </td>
                 </tr>
               </table>
