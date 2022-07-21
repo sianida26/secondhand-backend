@@ -153,7 +153,7 @@ module.exports = {
             price: bid.products.price,
             productId: bid.products.id,
             bidId: bid.id,
-            image: bidProducts.imageUrls,
+            image: bid.products.imageUrls,
             type: 'Penawaran diterima',
             bidPrice: bid.bidPrice,
             time: bid.acceptedAt,
