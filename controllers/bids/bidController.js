@@ -141,7 +141,7 @@ module.exports = {
           productId: bid.products.id,
           bidId: bid.id,
           image: bid.products.imageUrls,
-          type: 'Penawaran produk',
+          type: 'Anda menawar produk',
           bidPrice: bid.bidPrice,
           time: bid.createdAt,
         });
