@@ -195,7 +195,7 @@ module.exports = {
 
     return res.json(
       products
-        .filter((product) => product.isBiddable() && product.createdBy !== req.user?.id)
+        .filter((product) => product.isBiddable() && product.createdBy !== req.user?.id && !product.soldAt)
         .map((product) => ({
           id: product.id,
           name: product.name,
