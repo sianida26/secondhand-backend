@@ -13,14 +13,14 @@ const handleLogin = async (req, res) => {
 
     if (!user)
       return res.status(401).json({
-        message: 'Username atau password salah',
+        message: 'Email atau Password salah!',
       });
 
     const isPasswordCorrect = verifyPassword(password, user.password);
 
     if (!isPasswordCorrect)
       return res.status(401).json({
-        message: 'Username atau password salah',
+        message: 'Email atau Password salah!',
       });
 
     if (user.emailVerifiedAt == null && process.env.NODE_ENV === 'production') {
