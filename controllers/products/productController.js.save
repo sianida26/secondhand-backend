@@ -191,14 +191,12 @@ module.exports = {
 
   async getAvailableProducts(req, res) {
     //TODO: Filter items on database level for better performance
-    const products = await Products.findAll({ include: ['bids'] });
-
+    const products = (await Products.findAll({ include: ['bids'] })).;
 
     return res.json(
-      (await Promise.all(
       products
-        .filter(async (product) => await product.isBiddable() && product.createdBy !== req.user?.id)
-        )).map((product) => ({
+        .filter((product) => product.isBiddable() && product.createdBy !== req.user?.id && !product.soldAt)
+        .map((product) => ({
           id: product.id,
           name: product.name,
           category: product.category,
