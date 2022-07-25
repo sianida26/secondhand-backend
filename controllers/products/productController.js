@@ -197,13 +197,15 @@ module.exports = {
     return res.json(
       (await Promise.all(
       products
-        .filter(async (product) => await product.isBiddable() && product.createdBy !== req.user?.id)
-        )).map((product) => ({
-          id: product.id,
-          name: product.name,
-          category: product.category,
-          image: product.imageUrls,
-          price: product.price,
+        .map(async (product) => ({ biddable: await product.isBiddable(), product }))
+        ))
+        .filter(product => product.biddable && product.product.createdBy !== req.user?.id)
+        .map((product) => ({
+          id: product.product.id,
+          name: product.product.name,
+          category: product.product.category,
+          image: product.product.imageUrls,
+          price: product.product.price,
         }))
     );
   },
